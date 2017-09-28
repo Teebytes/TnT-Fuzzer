@@ -21,13 +21,13 @@ class Replicator:
 
     def create_init_value(self, object_type):
         if object_type == 'integer':
-            return 0
+            return 0  # TODO: react to init_rand_values
         if object_type == 'string':
-            return ''
+            return ''  # TODO: react to init_rand_values
         if object_type == 'boolean':
-            return False
+            return False  # TODO: react to init_rand_values
         if object_type == 'file':
-            return '/file/to/../something'
+            return '/file/to/../something'  # TODO: react to init_rand_values
 
         return self.replicate(object_type)
 

@@ -28,7 +28,8 @@ class TntFuzzer:
 
             path = paths[path_key]
             for op_code in path.keys():
-                operation = HttpOperation(op_code, 'http://' + host_basepath, path_key, op_infos=path[op_code])
+                operation = HttpOperation(op_code, 'http://' + host_basepath, path_key,
+                                          op_infos=path[op_code], use_fuzzing=True)
 
                 response = operation.execute(type_definitions)
                 validator = ResultValidator()
