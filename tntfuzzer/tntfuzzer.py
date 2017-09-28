@@ -10,8 +10,9 @@ from resultvalidatior import ResultValidator
 
 class TntFuzzer:
 
-    def __init__(self, url, log_unexpected_errors_only):
+    def __init__(self, url, iterations, log_unexpected_errors_only):
         self.url = url
+        self.iterations = iterations
         self.log_unexpected_errors_only = log_unexpected_errors_only
 
     def start(self):
@@ -31,12 +32,13 @@ class TntFuzzer:
                 operation = HttpOperation(op_code, 'http://' + host_basepath, path_key,
                                           op_infos=path[op_code], use_fuzzing=True)
 
-                response = operation.execute(type_definitions)
-                validator = ResultValidator()
-                log = validator.evaluate(response, path[op_code]['responses'], self.log_unexpected_errors_only)
+                for x in range(self.iterations):
+                    response = operation.execute(type_definitions)
+                    validator = ResultValidator()
+                    log = validator.evaluate(response, path[op_code]['responses'], self.log_unexpected_errors_only)
 
-                # log to screen for now
-                print(log)
+                    # log to screen for now
+                    print(log)
 
 
 if __name__ == "__main__":
@@ -53,9 +55,12 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--url', metavar='<URL>', type=str,
+    parser.add_argument('--url', type=str,
                         help='The URL pointing to your OpenAPI implementation e.g. '
                              'http://petstore.swagger.io/v2/swagger.json')
+
+    parser.add_argument('--iterations', type=int, default=1,
+                        help='The number of iterations one API call is fuzzed.')
 
     parser.add_argument('--log_all', action='store_true',
                         help='If set, all responses are logged. The expected responses and the '
@@ -66,5 +71,5 @@ if __name__ == "__main__":
     if args['url'] is None:
         parser.print_usage()
     else:
-        tnt = TntFuzzer(url=args['url'], log_unexpected_errors_only=not args['log_all'])
+        tnt = TntFuzzer(url=args['url'], iterations=args['iterations'], log_unexpected_errors_only=not args['log_all'])
         tnt.start()
