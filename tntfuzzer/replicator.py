@@ -1,4 +1,7 @@
 import json
+import string
+import sys
+from random import Random
 
 
 class ReplicationException(Exception):
@@ -18,14 +21,24 @@ class Replicator:
         self.object_type = object_type
         self.definitions = definitions
         self.init_rand_values = init_rand_values
+        self.random = Random()
 
     def create_init_value(self, object_type):
         if object_type == 'integer':
-            return 0  # TODO: react to init_rand_values
+            if self.init_rand_values:
+                return self.random.randint(0, sys.maxint)
+            else:
+                return 0
         if object_type == 'string':
-            return ''  # TODO: react to init_rand_values
+            if self.init_rand_values:
+                return self.randomword(self.random.randint(0, 200))   # TODO: make length of rand string param-able
+            else:
+                return ''
         if object_type == 'boolean':
-            return False  # TODO: react to init_rand_values
+            if self.init_rand_values:
+                return bool(self.random.getrandbits(1))
+            else:
+                return False
         if object_type == 'file':
             return '/file/to/../something'  # TODO: react to init_rand_values
 
@@ -62,6 +75,10 @@ class Replicator:
             return True
         else:
             return False
+
+    def randomword(self, length):
+        letters = string.ascii_lowercase
+        return ''.join(self.random.choice(letters) for i in range(length))
 
     def as_dict(self):
         return self.replicate(self.object_type)

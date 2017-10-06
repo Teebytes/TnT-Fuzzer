@@ -39,8 +39,11 @@ class HttpOperation:
                 body = self.create_body(type_definitions, parameter)
                 body = self.fuzz(body)
 
-            if 'formData' == parameter['in']:
-                form_data[parameter['name']] = self.create_form_parameter(type_definitions, parameter['type'])
+            if 'formData' == parameter['in'] or 'query' == parameter['in']:
+                type_cls = parameter['type']
+                if 'array' == type_cls:
+                    type_cls = parameter['items']['type']
+                form_data[parameter['name']] = self.create_form_parameter(type_definitions, type_cls)
 
         if self.op_code == 'post':
             print('post to ' + url)
