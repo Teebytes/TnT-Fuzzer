@@ -46,22 +46,18 @@ class HttpOperation:
                 form_data[parameter['name']] = self.create_form_parameter(type_definitions, type_cls)
 
         if self.op_code == 'post':
-            print('post to ' + url)
             if bool(form_data):
                 response = requests.post(url=url, data=form_data, json=None)
             else:
                 response = requests.post(url=url, data=None, json=body)
 
         if self.op_code == 'get':
-            print('get to ' + url)
             response = requests.get(url=url, params=form_data)
 
         if self.op_code == 'delete':
-            print('delete to ' + url)
             response = requests.delete(url=url)
 
         if self.op_code == 'put':
-            print('put to ' + url)
             response = requests.put(url=url, data=form_data)
 
         return response

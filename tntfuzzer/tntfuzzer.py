@@ -6,6 +6,7 @@ from bravado.client import SwaggerClient
 from __init__ import __version__
 from httpoperation import HttpOperation
 from resultvalidatior import ResultValidator
+from strutils import StrUtils
 
 
 class TntFuzzer:
@@ -25,9 +26,8 @@ class TntFuzzer:
         paths = spec['paths']
         type_definitions = spec['definitions']
         for path_key in paths.keys():
-            print('Proccessing Path: ' + path_key)
-
             path = paths[path_key]
+
             for op_code in path.keys():
                 operation = HttpOperation(op_code, 'http://' + host_basepath, path_key,
                                           op_infos=path[op_code], use_fuzzing=True)
@@ -38,7 +38,18 @@ class TntFuzzer:
                     log = validator.evaluate(response, path[op_code]['responses'], self.log_unexpected_errors_only)
 
                     # log to screen for now
-                    print(log)
+                    self.log_operation(operation.op_code, response.url, log)
+
+    def log_operation(self, op_code, url, log):
+        status_code = str(log['status_code'])
+        documented_reason = log['documented_reason']
+        body = log['body'].replace('\n', ' ')
+
+        if documented_reason is None:
+            StrUtils.print_log_row(op_code, url, status_code, 'None', body)
+        else:
+            if not self.log_unexpected_errors_only:
+                StrUtils.print_log_row(op_code, url, status_code, documented_reason, body)
 
 
 if __name__ == "__main__":
