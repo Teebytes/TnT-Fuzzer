@@ -1,4 +1,6 @@
-# TnT-Fuzzer
+
+![](docs/images/logo.jpg)
+============
 OpenAPI (swagger) fuzzer written in python. This fuzzer is like dynamite for your API!
 
 TnT-Fuzzer is designed to make fuzzing, robustness testing and validation of REST APIs easy and maintainable. After a 
