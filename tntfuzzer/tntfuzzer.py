@@ -52,7 +52,7 @@ class TntFuzzer:
                 StrUtils.print_log_row(op_code, url, status_code, documented_reason, body)
 
 
-if __name__ == "__main__":
+def main():
     print(termcolor.colored('___________  ___________     ___________', color='red'))
     print(termcolor.colored('\__    ___/__\__    ___/     \_   _____/_ __________________ ___________ ', color='red'))
     print(termcolor.colored('  |    | /    \|    |  ______ |    __)|  |  \___   /\___   // __ \_  __ \\', color='red'))
@@ -84,3 +84,7 @@ if __name__ == "__main__":
     else:
         tnt = TntFuzzer(url=args['url'], iterations=args['iterations'], log_unexpected_errors_only=not args['log_all'])
         tnt.start()
+
+
+if __name__ == "__main__":
+    main()
