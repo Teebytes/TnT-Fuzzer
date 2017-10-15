@@ -45,11 +45,12 @@ tntfuzzer -h
 
 The most important parameter is the **--url**, with the URL to your OpenAPI specification json file. 
 
-The parameter **--iterations** will specifiy how oftern an API call found in your specification will be fuzzed. If the 
-**--iterations** parameter is not specified, every API call is fuzzed only once.
+The parameter **--iterations** will specifiy how often an API call will be fuzzed. If 
+the **--iterations** parameter is not specified, every API call is fuzzed only once.
 
-Per default only responses that are not documented in your Service's OpenAPI specification are logged. If you want all
-fuzz responses to be logged, you have to specify that by setting the **--log_all** parameter. 
+Per default only responses that are not documented in your Service's OpenAPI specification are logged. This way only 
+undocumented errors are logged. If you want all fuzz responses to be logged, you have to specify that by 
+setting the **--log_all** parameter. 
 
 So following example run will fuzz every API call specified in the swagger.json with 100 permutations each. All 
 responses received from the server are logged: 
