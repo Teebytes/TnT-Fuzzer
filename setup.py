@@ -9,7 +9,7 @@ setup(
     description='An OpenAPI (Swagger) fuzzer written in python. Basically TnT for your API.',
     author='Tobias Hassenkloever',
     author_email='tnt@teebytes.net',
-    url='https://github.com/Thoiz/TnT-Fuzzer',
+    url='https://github.com/Teebytes/TnT-Fuzzer',
     keywords=['openapi', 'swagger', 'fuzzer', 'fuzzing', 'json-api', 'REST'],
     entry_points={'console_scripts': ['tntfuzzer=tntfuzzer.tntfuzzer:main']},
     install_requires=['bottle==0.12.13',
