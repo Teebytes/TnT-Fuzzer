@@ -62,9 +62,9 @@ tntfuzzer --url http://example.com:8080/v2/swagger.json --iterations 100 --log_a
 
 When run, TnT-Fuzzer logs all responses in a table on commandline: 
 
-| operation | url | response code | response message | response body | curl command 
+| operation | url | response code | response message | response body | curl command |
 |---|---|---|---|---|
-| get       | http://localhost:8080/v2/apicall | 200 | Successful Operation | {'success': true} | curl -XGET -H "Content-type: application/json" -d '{'foo': bar}' 'http://localhost:8080/v2/apicall'
+| get       | http://localhost:8080/v2/apicall | 200 | Successful Operation | {'success': true} | curl -XGET -H "Content-type: application/json" -d '{'foo': bar}' 'http://localhost:8080/v2/apicall' |
 
 ### Testing
 
