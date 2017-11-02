@@ -74,6 +74,11 @@ server can easily be generated and run locally.
 Run software tests using the following command:
 
 ```
-nosetests ./tests/*.py
+$ nosetests ./tests/*.py
+........................
+----------------------------------------------------------------------
+Ran 24 tests in 0.028s
+
+OK
 ```
  
