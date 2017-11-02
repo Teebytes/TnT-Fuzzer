@@ -1,5 +1,4 @@
-class Curlcommand:
-
+class CurlCommand:
     def __init__(self, url, method, data):
         self.url = url
         self.method = method

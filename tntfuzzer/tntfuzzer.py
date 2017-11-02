@@ -7,7 +7,7 @@ from __init__ import __version__
 from httpoperation import HttpOperation
 from resultvalidatior import ResultValidator
 from strutils import StrUtils
-from curlcommand import Curlcommand
+from curlcommand import CurlCommand
 
 
 class TntFuzzer:
@@ -37,7 +37,7 @@ class TntFuzzer:
                     response = operation.execute(type_definitions)
                     validator = ResultValidator()
                     log = validator.evaluate(response, path[op_code]['responses'], self.log_unexpected_errors_only)
-                    curlcommand = Curlcommand(self.url, operation.op_code, log['body'])
+                    curlcommand = CurlCommand(self.url, operation.op_code, log['body'])
 
                     # log to screen for now
                     self.log_operation(operation.op_code, response.url, log, curlcommand)
@@ -51,7 +51,7 @@ class TntFuzzer:
             StrUtils.print_log_row(op_code, url, status_code, 'None', body, curlcommand)
         else:
             if not self.log_unexpected_errors_only:
-                StrUtils.print_log_row(op_code, url, status_code, documented_reason, body)
+                StrUtils.print_log_row(op_code, url, status_code, documented_reason, body, curlcommand)
 
 
 def main():
