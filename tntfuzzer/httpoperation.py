@@ -51,14 +51,17 @@ class HttpOperation:
             else:
                 response = requests.post(url=url, data=None, json=body)
 
-        if self.op_code == 'get':
+        elif self.op_code == 'get':
             response = requests.get(url=url, params=form_data)
 
-        if self.op_code == 'delete':
+        elif self.op_code == 'delete':
             response = requests.delete(url=url)
 
-        if self.op_code == 'put':
+        elif self.op_code == 'put':
             response = requests.put(url=url, data=form_data)
+
+        else:
+            response = None
 
         return response
 

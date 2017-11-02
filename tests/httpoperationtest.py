@@ -76,7 +76,8 @@ class HttpOperationTest(TestCase):
     }
 
     def setUp(self):
-        self.http_op = HttpOperation('post', 'https://server.de/', 'pet/{petId}/uploadImage', self.SAMPLE_OP_INFOS, False)
+        self.http_op = HttpOperation('post', 'https://server.de/', 'pet/{petId}/uploadImage', self.SAMPLE_OP_INFOS,
+                                     False)
 
     def test_replace_url_parameter_replaces_placeholder_in_url_with_type_value(self):
         url = self.http_op.replace_url_parameter(ReplicatorTest.SAMPLE_DEFINITION, self.http_op.url, 'petId', 'integer')
