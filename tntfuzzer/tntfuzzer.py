@@ -37,7 +37,7 @@ class TntFuzzer:
                     response = operation.execute(type_definitions)
                     validator = ResultValidator()
                     log = validator.evaluate(response, path[op_code]['responses'], self.log_unexpected_errors_only)
-                    curlcommand = CurlCommand(self.url, operation.op_code, log['body'])
+                    curlcommand = CurlCommand(self.url, operation.op_code, operation.request_body)
 
                     # log to screen for now
                     self.log_operation(operation.op_code, response.url, log, curlcommand)

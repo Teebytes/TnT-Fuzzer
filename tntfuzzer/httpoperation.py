@@ -15,6 +15,7 @@ class HttpOperation:
         self.op_infos = op_infos
         self.use_fuzzing = use_fuzzing
         self.fuzzer = None
+        self.request_body = None
 
     def fuzz(self, json_str):
         if self.use_fuzzing is False:
@@ -27,7 +28,6 @@ class HttpOperation:
 
     def execute(self, type_definitions):
         url = self.url
-        body = None
         form_data = dict()
 
         for parameter in self.op_infos['parameters']:
@@ -36,8 +36,8 @@ class HttpOperation:
                 url = self.replace_url_parameter(type_definitions, url, parameter['name'], parameter['type'])
 
             if 'body' == parameter['in']:
-                body = self.create_body(type_definitions, parameter)
-                body = self.fuzz(body)
+                self.request_body = self.create_body(type_definitions, parameter)
+                self.request_body = self.fuzz(self.request_body)
 
             if 'formData' == parameter['in'] or 'query' == parameter['in']:
                 type_cls = parameter['type']
@@ -49,7 +49,7 @@ class HttpOperation:
             if bool(form_data):
                 response = requests.post(url=url, data=form_data, json=None)
             else:
-                response = requests.post(url=url, data=None, json=body)
+                response = requests.post(url=url, data=None, json=self.request_body)
 
         elif self.op_code == 'get':
             response = requests.get(url=url, params=form_data)

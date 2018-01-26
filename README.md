@@ -70,4 +70,15 @@ When run, TnT-Fuzzer logs all responses in a table on commandline:
 
 For testing or development, have a look at the [swagger petstore example](http://petstore.swagger.io/). A local stub 
 server can easily be generated and run locally. 
+
+Run software tests using the following command:
+
+```
+$ nosetests ./tests/*.py
+........................
+----------------------------------------------------------------------
+Ran 24 tests in 0.028s
+
+OK
+```
  
