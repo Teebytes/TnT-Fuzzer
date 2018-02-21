@@ -67,9 +67,12 @@ class HttpOperation:
         return response
 
     def replace_url_parameter(self, type_definitions, url, name, object_type):
-        value = Replicator(type_definitions, object_type, self.use_fuzzing).create_init_value(object_type)
-        new_url = url.replace('{' + name + '}', str(value))
-        return new_url
+        if name is not None and object_type is not None:
+            value = Replicator(type_definitions, object_type, self.use_fuzzing).create_init_value(object_type)
+            new_url = url.replace('{' + name + '}', str(value))
+            return new_url
+        else:
+            return url
 
     def create_form_parameter(self, type_definitions, object_type):
         value = Replicator(type_definitions, object_type, self.use_fuzzing).create_init_value(object_type)
