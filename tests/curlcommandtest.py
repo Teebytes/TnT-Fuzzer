@@ -1,4 +1,5 @@
 from unittest import TestCase
+
 from tntfuzzer.curlcommand import CurlCommand
 
 
@@ -23,3 +24,11 @@ class CurlCommandTest(TestCase):
 
         self.assertEquals(curlcommand.get(), "curl -XPOST -H \"Content-type: application/json\" -d "
                                              "'{\"id\": 2, \"name\": \"Bar\"}' http://example.com/api/post")
+
+    def test_empty_data(self):
+        method = "get"
+        url = "http://example.com/api/v2/list"
+        data = ""
+        curlcommand = CurlCommand(url, method, data)
+        self.assertEquals(curlcommand.get(), "curl -XGET -H \"Content-type: application/json\" "
+                                             "http://example.com/api/v2/list")
