@@ -1,13 +1,13 @@
 import argparse
-import termcolor
 
+import termcolor
 from bravado.client import SwaggerClient
 
 from __init__ import __version__
+from curlcommand import CurlCommand
 from httpoperation import HttpOperation
 from resultvalidatior import ResultValidator
 from strutils import StrUtils
-from curlcommand import CurlCommand
 
 
 class TntFuzzer:
@@ -20,6 +20,13 @@ class TntFuzzer:
     def start(self):
         print('Fetching open API from: ' + self.url)
 
+        protocol = None
+
+        if "https:" in self.url:
+            protocol = 'https://'
+        else:
+            protocol = 'http://'
+
         client = SwaggerClient.from_url(self.url)
         spec = client.swagger_spec.spec_dict
 
@@ -30,14 +37,14 @@ class TntFuzzer:
             path = paths[path_key]
 
             for op_code in path.keys():
-                operation = HttpOperation(op_code, 'http://' + host_basepath, path_key,
+                operation = HttpOperation(op_code, protocol + host_basepath, path_key,
                                           op_infos=path[op_code], use_fuzzing=True)
 
                 for x in range(self.iterations):
                     response = operation.execute(type_definitions)
                     validator = ResultValidator()
                     log = validator.evaluate(response, path[op_code]['responses'], self.log_unexpected_errors_only)
-                    curlcommand = CurlCommand(self.url, operation.op_code, operation.request_body)
+                    curlcommand = CurlCommand(response.url, operation.op_code, operation.request_body)
 
                     # log to screen for now
                     self.log_operation(operation.op_code, response.url, log, curlcommand)
