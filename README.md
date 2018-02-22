@@ -7,6 +7,8 @@ TnT-Fuzzer is designed to make fuzzing, robustness testing and validation of RES
 fuzzing run, the log files state the exact history of requests to reenact a crash or misuse. TnT-Fuzzer can be used 
 for penetration testing or continued testing of a service in development.  
 
+A project of [teebytes.net](https://teebytes.net/)
+
 ## Installation
 TnT-Fuzzer needs **python 2.7**
 
