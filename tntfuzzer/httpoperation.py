@@ -30,20 +30,22 @@ class HttpOperation:
         url = self.url
         form_data = dict()
 
-        for parameter in self.op_infos['parameters']:
-            # catch path parameters and replace them in url
-            if 'path' == parameter['in']:
-                url = self.replace_url_parameter(type_definitions, url, parameter['name'], parameter['type'])
+        # I know this isn't much of a fuzz.. but some paths in specs have no parameters
+        if 'parameters' in self.op_infos:
+            for parameter in self.op_infos['parameters']:
+                # catch path parameters and replace them in url
+                if 'path' == parameter['in']:
+                    url = self.replace_url_parameter(type_definitions, url, parameter['name'], parameter['type'])
 
-            if 'body' == parameter['in']:
-                self.request_body = self.create_body(type_definitions, parameter)
-                self.request_body = self.fuzz(self.request_body)
+                if 'body' == parameter['in']:
+                    self.request_body = self.create_body(type_definitions, parameter)
+                    self.request_body = self.fuzz(self.request_body)
 
-            if 'formData' == parameter['in'] or 'query' == parameter['in']:
-                type_cls = parameter['type']
-                if 'array' == type_cls:
-                    type_cls = parameter['items']['type']
-                form_data[parameter['name']] = self.create_form_parameter(type_definitions, type_cls)
+                if 'formData' == parameter['in'] or 'query' == parameter['in']:
+                    type_cls = parameter['type']
+                    if 'array' == type_cls:
+                        type_cls = parameter['items']['type']
+                    form_data[parameter['name']] = self.create_form_parameter(type_definitions, type_cls)
 
         if self.op_code == 'post':
             if bool(form_data):
