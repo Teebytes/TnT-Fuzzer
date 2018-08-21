@@ -1,7 +1,6 @@
 import json
 import string
 import sys
-#import traceback
 from random import Random
 
 
@@ -53,7 +52,6 @@ class Replicator:
         object_class = object_type.replace('#/definitions/', '')
 
         if not self.definition_contains_object_class(object_class):
-            #traceback.print_stack()
             raise ReplicationException('Object type "' + object_class + '" (from Swagger JSON) not found in given definitions.')
 
         object_schema = self.definitions[object_class]
