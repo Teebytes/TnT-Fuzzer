@@ -34,6 +34,11 @@ class Replicator:
                 return self.randomword(self.random.randint(0, 200))   # TODO: make length of rand string param-able
             else:
                 return ''
+        if object_type == 'number':
+            if self.init_rand_values:
+                return self.random.uniform(0, sys.maxint)
+            else:
+                return 0
         if object_type == 'boolean':
             if self.init_rand_values:
                 return bool(self.random.getrandbits(1))
@@ -41,14 +46,13 @@ class Replicator:
                 return False
         if object_type == 'file':
             return '/file/to/../something'  # TODO: react to init_rand_values
-
         return self.replicate(object_type)
 
     def replicate(self, object_type):
         object_class = object_type.replace('#/definitions/', '')
 
         if not self.definition_contains_object_class(object_class):
-            raise ReplicationException('Object type ' + object_class + ' not found in given definitions.')
+            raise ReplicationException('Object type "' + object_class + '" (from Swagger JSON) not found in given definitions.')
 
         object_schema = self.definitions[object_class]
         object_instance = {}
