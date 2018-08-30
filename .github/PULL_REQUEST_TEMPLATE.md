@@ -7,6 +7,6 @@
 ## Approach
 > Describe how you are implementing the solutions.
 
-## Ran tests?
-> Yes/No
+## Added tests?
+> Did you add tests for your feature? Yes/No
 
