@@ -1,3 +1,5 @@
+import json
+
 class CurlCommand:
     def __init__(self, url, method, data, headers):
         self.url = url
@@ -16,12 +18,13 @@ class CurlCommand:
         return curl_command
 
     def generate_headers(self):
-        headers_string = " -H \"Content-type: application/json\" "
-        if not bool(self.headers):
+        headers_string = " -H \"Content-type: application/json\""
+        headers = json.loads(self.headers)
+        if not bool(headers):
             return headers_string
         else:
-            for key in self.headers:
-                headers_string + " -H \"" + key + ":\"" + self.headers[key] + "\""
-        return headers_string
+            for key, value in headers.items():
+                headers_string += " -H \"" + key + "\": \"" + value + "\""
+        return headers_string.strip(" ")
 
 

@@ -32,3 +32,13 @@ class CurlCommandTest(TestCase):
         curlcommand = CurlCommand(url, method, data)
         self.assertEquals(curlcommand.get(), "curl -XGET -H \"Content-type: application/json\" "
                                              "http://example.com/api/v2/list")
+
+    def test_generate_headers(self):
+        method = "get"
+        url = "http://example.com/api/v2/list"
+        data = ""
+        headers = '{ \"X-API-Key\": \"abcdef12345\", \"user-agent\": \"tntfuzzer\" }'
+        expected_result = u'-H \"Content-type: application/json\" -H \"X-API-Key\": \"abcdef12345\" ' \
+                          u'-H \"user-agent\": \"tntfuzzer\"'
+        curlcommand = CurlCommand(url, method, data, headers)
+        self.assertEquals(curlcommand.generate_headers(), expected_result)
