@@ -9,13 +9,14 @@ from replicator import Replicator
 
 
 class HttpOperation:
-    def __init__(self, op_code, host_basepath, path, op_infos, use_fuzzing=True):
+    def __init__(self, op_code, host_basepath, path, op_infos, headers, use_fuzzing=True):
         self.op_code = op_code
         self.url = host_basepath + path
         self.op_infos = op_infos
         self.use_fuzzing = use_fuzzing
         self.fuzzer = None
         self.request_body = None
+        self.headers = headers
 
     def fuzz(self, json_str):
         if self.use_fuzzing is False:

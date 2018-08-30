@@ -1,4 +1,5 @@
 import argparse
+import json
 
 import termcolor
 from bravado.client import SwaggerClient
@@ -16,9 +17,10 @@ from strutils import StrUtils
 
 class TntFuzzer:
 
-    def __init__(self, url, iterations, log_unexpected_errors_only):
+    def __init__(self, url, iterations, headers, log_unexpected_errors_only):
         self.url = url
         self.iterations = iterations
+        self.headers = headers
         self.log_unexpected_errors_only = log_unexpected_errors_only
 
     def start(self):
@@ -62,7 +64,7 @@ class TntFuzzer:
 
                 for op_code in path.keys():
                     operation = HttpOperation(op_code, protocol + '://' + host_basepath, path_key,
-                                              op_infos=path[op_code], use_fuzzing=True)
+                                              op_infos=path[op_code], use_fuzzing=True, headers=self.headers)
 
                     for x in range(self.iterations):
                         response = operation.execute(type_definitions)
@@ -110,12 +112,16 @@ def main():
                         help='If set, all responses are logged. The expected responses and the '
                              'unexpected ones. Per default only unexpected responses are logged.')
 
+    parser.add_argument('--headers', type=json.loads,
+                        help='Send custom http headers for Cookies or api keys e.g. { \"X-API-Key\": \"abcdef12345\", \"user-agent\": \"tntfuzzer\" }')
+
     args = vars(parser.parse_args())
 
     if args['url'] is None:
         parser.print_usage()
     else:
-        tnt = TntFuzzer(url=args['url'], iterations=args['iterations'], log_unexpected_errors_only=not args['log_all'])
+        tnt = TntFuzzer(url=args['url'], iterations=args['iterations'], headers=args['headers'],
+                        log_unexpected_errors_only=not args['log_all'])
         tnt.start()
 
 
