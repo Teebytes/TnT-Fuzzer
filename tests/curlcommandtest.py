@@ -9,8 +9,8 @@ class CurlCommandTest(TestCase):
         method = "get"
         url = "http://example.com/api/v2/test"
         data = "{\"id\": 1, \"name\": \"Foo\"}"
-
-        curlcommand = CurlCommand(url, method, data)
+        headers = u'{}'
+        curlcommand = CurlCommand(url, method, data, headers)
 
         self.assertEquals(curlcommand.get(), "curl -XGET -H \"Content-type: application/json\" -d "
                                              "'{\"id\": 1, \"name\": \"Foo\"}' http://example.com/api/v2/test")
@@ -19,8 +19,8 @@ class CurlCommandTest(TestCase):
         method = "pOsT"
         url = "http://example.com/api/post"
         data = "{\"id\": 2, \"name\": \"Bar\"}"
-
-        curlcommand = CurlCommand(url, method, data)
+        headers = u'{}'
+        curlcommand = CurlCommand(url, method, data, headers)
 
         self.assertEquals(curlcommand.get(), "curl -XPOST -H \"Content-type: application/json\" -d "
                                              "'{\"id\": 2, \"name\": \"Bar\"}' http://example.com/api/post")
@@ -29,7 +29,8 @@ class CurlCommandTest(TestCase):
         method = "get"
         url = "http://example.com/api/v2/list"
         data = ""
-        curlcommand = CurlCommand(url, method, data)
+        headers = u'{}'
+        curlcommand = CurlCommand(url, method, data, headers)
         self.assertEquals(curlcommand.get(), "curl -XGET -H \"Content-type: application/json\" "
                                              "http://example.com/api/v2/list")
 
