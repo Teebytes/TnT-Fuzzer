@@ -42,17 +42,30 @@ class TntFuzzer:
         else:
             # fake the array we'd find in the spec
             schemes.append(specURL.scheme)
-            self.log_operation(None, self.url, {"status_code": "000", "documented_reason": "Specification: no schemes entry, fallback to spec URL scheme", "body": "Specification: host entry not present in Swagger spec"}, '')
+            self.log_operation(None, self.url,
+                               {
+                                   "status_code": "000",
+                                   "documented_reason": "Specification: no schemes entry, fallback to spec URL scheme",
+                                   "body": "Specification: host entry not present in Swagger spec"}, '')
 
         if 'host' in spec:
             host = spec['host']
         else:
             host = specURL.netloc
-            self.log_operation(None, self.url, {"status_code": "000", "documented_reason": "Specification: no host entry, fallback to spec URL host", "body":  "Specification: schemes entry not present in Swagger spec"}, '')
+            self.log_operation(None, self.url,
+                               {
+                                   "status_code": "000",
+                                   "documented_reason": "Specification: no host entry, fallback to spec URL host",
+                                   "body": "Specification: schemes entry not present in Swagger spec"
+                               }, '')
 
         # There is no nice way to derive the basePath from the spec's URL. They *have* to include it
         if 'basePath' not in spec:
-            self.log_operation(None, self.url, {"status_code": "000", "body": "Specification Error: basePath entry missing from Swagger spec"}, '')
+            self.log_operation(None, self.url,
+                               {
+                                   "status_code": "000",
+                                   "body": "Specification Error: basePath entry missing from Swagger spec"
+                               }, '')
         host_basepath = host + spec['basePath']
         paths = spec['paths']
         type_definitions = spec['definitions']

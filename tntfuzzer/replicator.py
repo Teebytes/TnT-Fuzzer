@@ -52,7 +52,8 @@ class Replicator:
         object_class = object_type.replace('#/definitions/', '')
 
         if not self.definition_contains_object_class(object_class):
-            raise ReplicationException('Object type "' + object_class + '" (from Swagger JSON) not found in given definitions.')
+            raise ReplicationException('Object type "' + object_class +
+                                       '" (from Swagger JSON) not found in given definitions.')
 
         object_schema = self.definitions[object_class]
         object_instance = {}
