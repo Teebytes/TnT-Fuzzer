@@ -12,7 +12,7 @@ class CurlCommandTest(TestCase):
         headers = u'{}'
         curlcommand = CurlCommand(url, method, data, headers)
 
-        self.assertEquals(curlcommand.get(), "curl -XGET -H \"Content-type: application/json\" -d " 
+        self.assertEquals(curlcommand.get(), "curl -XGET -H \"Content-type: application/json\" -d "
                                              "'{\"id\": 1, \"name\": \"Foo\"}' http://example.com/api/v2/test")
 
     def test_post_method(self):

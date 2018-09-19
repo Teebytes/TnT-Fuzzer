@@ -1,6 +1,8 @@
 import json
 
+
 class CurlCommand:
+
     def __init__(self, url, method, data, headers):
         self.url = url
         self.method = method
@@ -12,9 +14,8 @@ class CurlCommand:
             curl_command = "curl -X" + self.method.upper() + self.generate_headers() \
                            + " " + self.url
         else:
-            curl_command = "curl -X" + self.method.upper() + self.generate_headers() + \
-                                                             " -d '" + self.data + "' " \
-                           + self.url
+            curl_command = "curl -X" + self.method.upper() + \
+                           self.generate_headers() + " -d '" + self.data + "' " + self.url
 
         return curl_command
 
@@ -29,5 +30,3 @@ class CurlCommand:
                 headers_string += "-H \"" + key + "\": \"" + value + "\""
                 headers_string += " "
         return headers_string.strip()
-
-
