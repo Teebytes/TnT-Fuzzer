@@ -1,5 +1,7 @@
 
 ![](docs/images/logo.jpg)
+
+[![Build Status](https://travis-ci.com/Teebytes/TnT-Fuzzer.svg?branch=master)](https://travis-ci.com/Teebytes/TnT-Fuzzer)
 ============
 OpenAPI (swagger) fuzzer written in python. This fuzzer is like dynamite for your API!
 
