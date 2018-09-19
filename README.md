@@ -12,7 +12,8 @@ for penetration testing or continued testing of a service in development.
 A project of [teebytes.net](https://teebytes.net/)
 
 ## Installation
-TnT-Fuzzer needs **python 2.7**
+TnT-Fuzzer shifted support away from python 2 to  **python 3.7**. If you 
+need a python 2 compatible source, lookup TnT-Fuzzer Version 1.0.0 and below.
 
 ### With pip
 Just install tntfuzzer with pip and its ready for usage:
@@ -22,14 +23,26 @@ pip install tntfuzzer
 ```
 
 ### From source
-Checkout git repository. Navigate into fresh cloned repository and install all dependencies needed. All dependencies 
-are listed in requirements.txt and can be installed via pip:
+Checkout git repository. Navigate into fresh cloned repository and install 
+all dependencies needed. All dependencies are listed in requirements.txt 
+and can be installed via pip:
 
 ```
 pip install -r requirements.txt
 ```
 
-Then run **tntfuzzer** with:
+However, at the moment of writing this guide the PyJFuzz dependency available 
+via [pypi](https://pypi.org/) is outdated only compatible with python 2 only. So, 
+when problems installing the PyJFuzz dependency occur, install the newest version 
+of it manually and then install the other dependencies:
+
+```
+git clone https://github.com/mseclab/PyJFuzz.git && cd PyJFuzz && python setup.py install
+cd ..
+pip install -r requirements.txt
+```
+
+Then all dependencies should be met and run **tntfuzzer** with:
 
 ```
 python tntfuzzer/tntfuzzer.py
@@ -86,10 +99,11 @@ server can easily be generated and run locally.
 Run software tests using the following command:
 
 ```
-$ nosetests ./tests/*.py
+$ cd tntfuzzer
+$ nosetests  tests/core/*.py tests/utils/*.py
 ........................
 ----------------------------------------------------------------------
-Ran 24 tests in 0.028s
+Ran 29 tests in 0.028s
 
 OK
 ```

@@ -1,6 +1,17 @@
 from setuptools import setup, find_packages
 
-version = open('tntfuzzer/__init__.py', 'r').readline().split()[2].strip("'")
+# read in version from tntfuzzer.py
+with open('tntfuzzer/tntfuzzer.py', 'r') as file:
+    content = file.readlines()
+    for line in content:
+        if line.startswith('version'):
+            version = line.split('\"')[1]
+            break
+
+# read all dependencies and convert them to list
+with open('requirements.txt') as file:
+    content = file.readlines()
+    dependencies = [line.replace('\n', '') for line in content]
 
 setup(
     name='tntfuzzer',
@@ -12,33 +23,4 @@ setup(
     url='https://github.com/Teebytes/TnT-Fuzzer',
     keywords=['openapi', 'swagger', 'fuzzer', 'fuzzing', 'json-api', 'REST'],
     entry_points={'console_scripts': ['tntfuzzer=tntfuzzer.tntfuzzer:main']},
-    install_requires=['bottle==0.12.13',
-                      'bravado==9.1.0',
-                      'bravado-core==4.8.4',
-                      'certifi==2017.7.27.1',
-                      'chardet==3.0.4',
-                      'funcsigs==1.0.2',
-                      'functools32==3.2.3.post2',
-                      'gitdb2==2.0.2',
-                      'GitPython==2.1.5',
-                      'gramfuzz==1.2.0',
-                      'idna==2.6',
-                      'jsonschema==2.6.0',
-                      'mock==2.0.0',
-                      'netifaces==0.10.6',
-                      'nose==1.3.7',
-                      'pbr==3.1.1',
-                      'PyJFuzz==1.1.0',
-                      'python-dateutil==2.6.1',
-                      'pytz==2017.2',
-                      'PyYAML==3.12',
-                      'requests==2.18.4',
-                      'rfc3987==1.3.7',
-                      'simplejson==3.11.1',
-                      'six==1.10.0',
-                      'smmap2==2.0.3',
-                      'strict-rfc3339==0.7',
-                      'swagger-spec-validator==2.1.0',
-                      'termcolor==1.1.0',
-                      'urllib3==1.22',
-                      'webcolors==1.7'])
+    install_requires=dependencies)

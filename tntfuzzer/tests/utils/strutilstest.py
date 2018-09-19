@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from tntfuzzer.strutils import StrUtils
+from utils.strutils import StrUtils
 
 
 class StrUtilsTest(TestCase):

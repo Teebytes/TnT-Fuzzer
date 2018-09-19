@@ -1,8 +1,8 @@
-from unittest import TestCase
-from mock import patch, mock
+from unittest import TestCase, mock
+from unittest.mock import patch
 
-from tests.replicatortest import ReplicatorTest
-from tntfuzzer.httpoperation import HttpOperation
+from core.httpoperation import HttpOperation
+from tests.core.replicatortest import ReplicatorTest
 
 
 def mock_request_get(url, params=None, headers=None):

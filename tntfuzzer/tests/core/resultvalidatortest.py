@@ -1,8 +1,8 @@
 from unittest import TestCase
 
-from mock import MagicMock
+from unittest.mock import MagicMock
 
-from tntfuzzer.resultvalidatior import ResultValidator
+from core.resultvalidatior import ResultValidator
 
 
 class ResultValidatorTest(TestCase):

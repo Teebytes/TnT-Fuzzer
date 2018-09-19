@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from tntfuzzer.curlcommand import CurlCommand
+from core.curlcommand import CurlCommand
 
 
 class CurlCommandTest(TestCase):
@@ -42,4 +42,14 @@ class CurlCommandTest(TestCase):
         expected_result = u'-H \"Content-type: application/json\" -H \"X-API-Key\": \"abcdef12345\" ' \
                           u'-H \"user-agent\": \"tntfuzzer\"'
         curlcommand = CurlCommand(url, method, data, headers)
+        self.assertEquals(curlcommand.generate_headers(), expected_result)
+
+    def test_generate_headers_returns_contenttype_only_when_headers_nonetype(self):
+        method = "get"
+        url = "http://example.com/api/v2/list"
+        data = ""
+        expected_result = u'-H \"Content-type: application/json\"'
+
+        curlcommand = CurlCommand(url, method, data, None)
+
         self.assertEquals(curlcommand.generate_headers(), expected_result)

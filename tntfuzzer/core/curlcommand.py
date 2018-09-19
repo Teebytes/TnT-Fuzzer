@@ -21,12 +21,14 @@ class CurlCommand:
 
     def generate_headers(self):
         headers_string = " -H \"Content-type: application/json\""
-        headers = json.loads(self.headers)
-        if not bool(headers):
-            return headers_string
-        else:
-            headers_string += " "
-            for key, value in headers.items():
-                headers_string += "-H \"" + key + "\": \"" + value + "\""
+
+        if self.headers is not None:
+            headers = json.loads(self.headers)
+            if not bool(headers):
+                return headers_string
+            else:
                 headers_string += " "
+                for key, value in headers.items():
+                    headers_string += "-H \"" + key + "\": \"" + value + "\""
+                    headers_string += " "
         return headers_string.strip()
