@@ -1,8 +1,8 @@
-from unittest import TestCase
-from mock import patch, mock
+from unittest import TestCase, mock
+from unittest.mock import patch
 
-from tests.replicatortest import ReplicatorTest
-from tntfuzzer.httpoperation import HttpOperation
+from core.httpoperation import HttpOperation
+from tests.core.replicatortest import ReplicatorTest
 
 
 def mock_request_get(url, params=None, headers=None):
@@ -80,7 +80,8 @@ class HttpOperationTest(TestCase):
                                      {"X-API-Key": "abcdef123"}, False)
 
     def test_replace_url_parameter_replaces_placeholder_in_url_with_type_value(self):
-        url = self.http_op.replace_url_parameter(ReplicatorTest.SAMPLE_DEFINITION, self.http_op.url, 'petId', 'integer')
+        url = self.http_op.replace_url_parameter(ReplicatorTest.SAMPLE_DEFINITION,
+                                                 self.http_op.url, 'petId', 'integer')
         self.assertEqual(url, 'https://server.de/pet/0/uploadImage')
 
     def test_replace_url_parameter_replaces_only_named_param(self):

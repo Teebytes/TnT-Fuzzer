@@ -1,12 +1,16 @@
 language: python
 python:
-  - "2.7"
+  - "3.6"
 # command to install dependencies
 install:
+  - git clone https://github.com/mseclab/PyJFuzz.git && cd PyJFuzz && python setup.py install && cd ..
   - pip install -r requirements.txt
   - pip install -r requirements-dev.txt
 # command to run tests
 script:
-  - nosetests ./tests/*.py
-  - pycodestyle --max-line-length=120 ./tests/*.py
-  - pycodestyle --max-line-length=120 --ignore=W605,W504 ./tntfuzzer/*.py
+  - cd tntfuzzer && nosetests tests/core/*.py tests/utils/*.py
+  - pycodestyle --max-line-length=120 ./tests/core/*.py
+  - pycodestyle --max-line-length=120 ./tests/utils/*.py
+  - pycodestyle --max-line-length=120 --ignore=W605,W504 ./*.py
+  - pycodestyle --max-line-length=120 --ignore=W605,W504 ./core/*.py
+  - pycodestyle --max-line-length=120 --ignore=W605,W504 ./utils/*.py
