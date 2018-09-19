@@ -113,7 +113,8 @@ def main():
                              'unexpected ones. Per default only unexpected responses are logged.')
 
     parser.add_argument('--headers', type=json.loads,
-                        help='Send custom http headers for Cookies or api keys e.g. { \"X-API-Key\": \"abcdef12345\", \"user-agent\": \"tntfuzzer\" }')
+                        help='Send custom http headers for Cookies or api keys e.g. { \"X-API-Key\": \"abcdef12345\", '
+                             '\"user-agent\": \"tntfuzzer\" }')
 
     args = vars(parser.parse_args())
 
