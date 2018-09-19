@@ -1,18 +1,17 @@
 import argparse
 import json
-
 import termcolor
-from bravado.client import SwaggerClient
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
 
-from __init__ import __version__
-from curlcommand import CurlCommand
-from httpoperation import HttpOperation
-from resultvalidatior import ResultValidator
-from strutils import StrUtils
+from bravado.client import SwaggerClient
+from urllib.parse import urlparse
+
+from core.curlcommand import CurlCommand
+from core.httpoperation import HttpOperation
+from core.resultvalidatior import ResultValidator
+from utils.strutils import StrUtils
+
+
+version = "2.0.0"
 
 
 class TntFuzzer:
@@ -83,7 +82,7 @@ class TntFuzzer:
                         response = operation.execute(type_definitions)
                         validator = ResultValidator()
                         log = validator.evaluate(response, path[op_code]['responses'], self.log_unexpected_errors_only)
-                        curlcommand = CurlCommand(response.url, operation.op_code, operation.request_body)
+                        curlcommand = CurlCommand(response.url, operation.op_code, operation.request_body, self.headers)
 
                         # log to screen for now
                         self.log_operation(operation.op_code, response.url, log, curlcommand)
@@ -109,7 +108,7 @@ def main():
     print(termcolor.colored('    Dynamite ', 'green') + termcolor.colored('\/', 'red') +
           termcolor.colored(' for your API!', 'green') +
           termcolor.colored('     \/              \/      \/    \/    ', 'red') +
-          termcolor.colored('   v', 'green') + termcolor.colored(__version__, 'blue'))
+          termcolor.colored('   v', 'green') + termcolor.colored(version, 'blue'))
     print('')
 
     parser = argparse.ArgumentParser()

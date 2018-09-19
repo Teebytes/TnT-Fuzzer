@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from tntfuzzer.replicator import Replicator, ReplicationException
+from core.replicator import Replicator, ReplicationException
 
 
 class ReplicatorTest(TestCase):
@@ -194,11 +194,11 @@ class ReplicatorTest(TestCase):
         self.replicator = Replicator(definitions=self.SAMPLE_DEFINITION, object_type='#/definitions/ApiResponse')
         result = self.replicator.as_dict()
         self.assertIsNotNone(result['code'])
-        self.assertEquals(str(type(result['code'])), "<type 'int'>")
+        self.assertEquals(str(type(result['code'])), "<class 'int'>")
         self.assertIsNotNone(result['type'])
-        self.assertEquals(str(type(result['type'])), "<type 'str'>")
+        self.assertEquals(str(type(result['type'])), "<class 'str'>")
         self.assertIsNotNone(result['message'])
-        self.assertEquals(str(type(result['message'])), "<type 'str'>")
+        self.assertEquals(str(type(result['message'])), "<class 'str'>")
 
     def test_as_dict_creates_nested_object_from_definition_and_has_all_fields(self):
         self.replicator = Replicator(definitions=self.SAMPLE_DEFINITION, object_type='#/definitions/Pet')
@@ -206,7 +206,7 @@ class ReplicatorTest(TestCase):
         self.assertIsNotNone(result['id'])
         self.assertIsNotNone(result['name'])
         self.assertIsNotNone(result['photoUrls'])
-        self.assertEquals(str(type(result['photoUrls'])), "<type 'list'>")
+        self.assertEquals(str(type(result['photoUrls'])), "<class 'list'>")
 
         # nested array of objects
         self.assertIsNotNone(result['tags'])
@@ -214,8 +214,8 @@ class ReplicatorTest(TestCase):
 
         # nested object
         self.assertIsNotNone(result['category'])
-        self.assertEquals(str(type(result['category']['id'])), "<type 'int'>")
-        self.assertEquals(str(type(result['category']['name'])), "<type 'str'>")
+        self.assertEquals(str(type(result['category']['id'])), "<class 'int'>")
+        self.assertEquals(str(type(result['category']['name'])), "<class 'str'>")
 
     def test_as_dict_create_nested_object_not_in_definition_results_in_error(self):
         self.replicator = Replicator(definitions=self.SAMPLE_DEFINITION, object_type='#/definitions/FailObject')

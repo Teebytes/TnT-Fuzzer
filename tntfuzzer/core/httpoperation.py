@@ -5,7 +5,7 @@ import requests
 from pyjfuzz.core.pjf_configuration import PJFConfiguration
 from pyjfuzz.core.pjf_factory import PJFFactory
 
-from replicator import Replicator
+from core.replicator import Replicator
 
 
 class HttpOperation:

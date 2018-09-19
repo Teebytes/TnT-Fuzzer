@@ -26,7 +26,7 @@ class Replicator:
     def create_init_value(self, object_type):
         if object_type == 'integer':
             if self.init_rand_values:
-                return self.random.randint(0, sys.maxint)
+                return self.random.randint(0, sys.maxsize)
             else:
                 return 0
         if object_type == 'string':
@@ -36,7 +36,7 @@ class Replicator:
                 return ''
         if object_type == 'number':
             if self.init_rand_values:
-                return self.random.uniform(0, sys.maxint)
+                return self.random.uniform(0, sys.maxsize)
             else:
                 return 0
         if object_type == 'boolean':
