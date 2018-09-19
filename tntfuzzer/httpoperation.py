@@ -50,18 +50,18 @@ class HttpOperation:
 
         if self.op_code == 'post':
             if bool(form_data):
-                response = requests.post(url=url, data=form_data, json=None)
+                response = requests.post(url=url, data=form_data, json=None, headers=self.headers)
             else:
-                response = requests.post(url=url, data=None, json=self.request_body)
+                response = requests.post(url=url, data=None, json=self.request_body, headers=self.headers)
 
         elif self.op_code == 'get':
-            response = requests.get(url=url, params=form_data)
+            response = requests.get(url=url, params=form_data, headers=self.headers)
 
         elif self.op_code == 'delete':
-            response = requests.delete(url=url)
+            response = requests.delete(url=url, headers=self.headers)
 
         elif self.op_code == 'put':
-            response = requests.put(url=url, data=form_data)
+            response = requests.put(url=url, data=form_data, headers=self.headers)
 
         else:
             response = None
