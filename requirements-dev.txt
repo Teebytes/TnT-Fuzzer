@@ -1,1 +1,4 @@
 pycodestyle
+nose==1.3.7
+coverage
+mock==2.0.0

@@ -35,6 +35,14 @@ Then run **tntfuzzer** with:
 python tntfuzzer/tntfuzzer.py
 ```
 
+### For Development
+There are dependencies only needed for developing the fuzzer. These are listed
+in the requirements-dev.txt and can be installed via pip:
+
+```
+pip install -r requirements-dev.txt
+```
+
 ## Documentation
 
 ### Examples
