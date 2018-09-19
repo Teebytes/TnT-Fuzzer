@@ -9,13 +9,14 @@ from replicator import Replicator
 
 
 class HttpOperation:
-    def __init__(self, op_code, host_basepath, path, op_infos, use_fuzzing=True):
+    def __init__(self, op_code, host_basepath, path, op_infos, headers, use_fuzzing=True):
         self.op_code = op_code
         self.url = host_basepath + path
         self.op_infos = op_infos
         self.use_fuzzing = use_fuzzing
         self.fuzzer = None
         self.request_body = None
+        self.headers = headers
 
     def fuzz(self, json_str):
         if self.use_fuzzing is False:
@@ -49,18 +50,18 @@ class HttpOperation:
 
         if self.op_code == 'post':
             if bool(form_data):
-                response = requests.post(url=url, data=form_data, json=None)
+                response = requests.post(url=url, data=form_data, json=None, headers=self.headers)
             else:
-                response = requests.post(url=url, data=None, json=self.request_body)
+                response = requests.post(url=url, data=None, json=self.request_body, headers=self.headers)
 
         elif self.op_code == 'get':
-            response = requests.get(url=url, params=form_data)
+            response = requests.get(url=url, params=form_data, headers=self.headers)
 
         elif self.op_code == 'delete':
-            response = requests.delete(url=url)
+            response = requests.delete(url=url, headers=self.headers)
 
         elif self.op_code == 'put':
-            response = requests.put(url=url, data=form_data)
+            response = requests.put(url=url, data=form_data, headers=self.headers)
 
         else:
             response = None
