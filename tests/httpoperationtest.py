@@ -93,6 +93,14 @@ class HttpOperationTest(TestCase):
         value = self.http_op.create_form_parameter(ReplicatorTest.SAMPLE_DEFINITION, 'integer')
         self.assertEqual(value, '0')
 
+    def test_execute_with_unrecognizable_http_op_will_result_in_Nonetype_response(self):
+        self.http_op = HttpOperation('OGRE', 'https://server.de/', 'pet/{petId}/uploadImage', self.SAMPLE_OP_INFOS,
+                                     {"X-API-Key": "abcdef123"}, False)
+
+        result = self.http_op.execute(ReplicatorTest.SAMPLE_DEFINITION)
+
+        self.assertIsNone(result)
+
     @patch('requests.get', side_effect=mock_request_get)
     def test_execute_with_parameter_definition_will_send_request_without_parameters_set(self, mock_get):
         definition_no_parameters = self.SAMPLE_OP_INFOS
