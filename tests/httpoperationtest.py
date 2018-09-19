@@ -98,11 +98,11 @@ class HttpOperationTest(TestCase):
         definition_no_parameters = self.SAMPLE_OP_INFOS
         definition_no_parameters.pop('parameters', 0)
         self.http_op = HttpOperation('get', 'https://server.de/', 'pet/{petId}/uploadImage', definition_no_parameters,
-                                     False)
+                                     {"X-API-Key": "abcdef123"}, False)
 
         self.http_op.execute(ReplicatorTest.SAMPLE_DEFINITION)
 
-        self.assertIn(mock.call(params={},
+        self.assertIn(mock.call(params={}, headers={"X-API-Key": "abcdef123"},
                                 url='https://server.de/pet/{petId}/uploadImage'), mock_get.call_args_list)
 
     @patch('requests.post', side_effect=mock_request_post)

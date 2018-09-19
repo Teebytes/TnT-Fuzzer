@@ -31,7 +31,6 @@ class HttpOperation:
         url = self.url
         form_data = dict()
 
-        # I know this isn't much of a fuzz.. but some paths in specs have no parameters
         if 'parameters' in self.op_infos:
             for parameter in self.op_infos['parameters']:
                 # catch path parameters and replace them in url
