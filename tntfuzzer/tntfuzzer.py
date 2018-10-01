@@ -1,8 +1,8 @@
 import argparse
 import json
+import requests
 import termcolor
 
-from bravado.client import SwaggerClient
 from urllib.parse import urlparse
 
 from core.curlcommand import CurlCommand
@@ -32,8 +32,7 @@ class TntFuzzer:
         host = None
         basePath = None
 
-        client = SwaggerClient.from_url(self.url)
-        spec = client.swagger_spec.spec_dict
+        spec = self.get_swagger_spec(self.url)
         specURL = urlparse(self.url)
 
         if 'schemes' in spec:
@@ -97,6 +96,9 @@ class TntFuzzer:
         else:
             if not self.log_unexpected_errors_only:
                 StrUtils.print_log_row(op_code, url, status_code, documented_reason, body, curlcommand)
+
+    def get_swagger_spec(self, url):
+        return json.loads(requests.get(url=url).text)
 
 
 def main():
