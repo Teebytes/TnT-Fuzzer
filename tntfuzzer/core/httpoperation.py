@@ -1,7 +1,9 @@
 import json
-from argparse import Namespace
-
 import requests
+
+from argparse import Namespace
+from random import Random
+
 from pyjfuzz.core.pjf_configuration import PJFConfiguration
 from pyjfuzz.core.pjf_factory import PJFFactory
 
@@ -17,6 +19,7 @@ class HttpOperation:
         self.fuzzer = None
         self.request_body = None
         self.headers = headers
+        self.random = Random()
 
     def fuzz(self, json_str):
         if self.use_fuzzing is False:
@@ -45,7 +48,9 @@ class HttpOperation:
                     type_cls = parameter['type']
                     if 'array' == type_cls:
                         type_cls = parameter['items']['type']
-                    form_data[parameter['name']] = self.create_form_parameter(type_definitions, type_cls)
+
+                    if self.is_parameter_not_optional_but_randomize(parameter['required']):
+                        form_data[parameter['name']] = self.create_form_parameter(type_definitions, type_cls)
 
         if self.op_code == 'post':
             if bool(form_data):
@@ -78,6 +83,15 @@ class HttpOperation:
     def create_form_parameter(self, type_definitions, object_type):
         value = Replicator(type_definitions, object_type, self.use_fuzzing).create_init_value(object_type)
         return str(value)
+
+    def is_parameter_not_optional_but_randomize(self, parameter_required):
+        if parameter_required:
+            return True
+
+        if bool(self.random.getrandbits(1)):
+            return True
+
+        return False
 
     def create_body(self, type_definitions, parameter):
         result = ''
