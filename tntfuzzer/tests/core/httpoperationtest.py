@@ -2,6 +2,7 @@ from unittest import TestCase, mock
 from unittest.mock import patch, MagicMock
 
 from core.httpoperation import HttpOperation
+from core.replicator import Replicator
 from tests.core.replicatortest import ReplicatorTest
 
 
@@ -30,7 +31,8 @@ def random_false(obj, bit):
 
 
 def create_http_op_with_random_mock(op_code, host_basepath, path, op_infos, headers):
-    http_op = HttpOperation(op_code, host_basepath, path, op_infos, headers, False)
+    replicator = Replicator(ReplicatorTest.SAMPLE_DEFINITION, True, False)
+    http_op = HttpOperation(op_code, host_basepath, path, op_infos, headers, replicator, False)
     http_op.random.getrandbits = MagicMock(return_value=True)
     return http_op
 
@@ -94,18 +96,16 @@ class HttpOperationTest(TestCase):
                                                        self.SAMPLE_OP_INFOS, {"X-API-Key": "abcdef123"})
 
     def test_replace_url_parameter_replaces_placeholder_in_url_with_type_value(self):
-        url = self.http_op.replace_url_parameter(ReplicatorTest.SAMPLE_DEFINITION,
-                                                 self.http_op.url, 'petId', 'integer')
+        url = self.http_op.replace_url_parameter(self.http_op.url, 'petId', 'integer')
         self.assertEqual(url, 'https://server.de/pet/0/uploadImage')
 
     def test_replace_url_parameter_replaces_only_named_param(self):
-        url = self.http_op.replace_url_parameter(ReplicatorTest.SAMPLE_DEFINITION,
-                                                 'https://server.de/pet/{petId}/uploadImage/{imgName}',
+        url = self.http_op.replace_url_parameter('https://server.de/pet/{petId}/uploadImage/{imgName}',
                                                  'imgName', 'string')
         self.assertEqual(url, 'https://server.de/pet/{petId}/uploadImage/')
 
     def test_create_form_parameter_makes_instance_of_type_as_string(self):
-        value = self.http_op.create_form_parameter(ReplicatorTest.SAMPLE_DEFINITION, 'integer')
+        value = self.http_op.create_form_parameter('integer')
         self.assertEqual(value, '0')
 
     def test_is_parameter_not_optional_but_randomize_returns_true_when_param_not_optional(self):
@@ -126,7 +126,7 @@ class HttpOperationTest(TestCase):
         self.http_op = create_http_op_with_random_mock('OGRE', 'https://server.de/', 'pet/{petId}/uploadImage',
                                                        self.SAMPLE_OP_INFOS, {"X-API-Key": "abcdef123"})
 
-        result = self.http_op.execute(ReplicatorTest.SAMPLE_DEFINITION)
+        result = self.http_op.execute()
 
         self.assertIsNone(result)
 
@@ -137,14 +137,14 @@ class HttpOperationTest(TestCase):
         self.http_op = create_http_op_with_random_mock('get', 'https://server.de/', 'pet/{petId}/uploadImage',
                                                        definition_no_parameters, {"X-API-Key": "abcdef123"})
 
-        self.http_op.execute(ReplicatorTest.SAMPLE_DEFINITION)
+        self.http_op.execute()
 
         self.assertIn(mock.call(params={}, headers={"X-API-Key": "abcdef123"},
                                 url='https://server.de/pet/{petId}/uploadImage'), mock_get.call_args_list)
 
     @patch('requests.post', side_effect=mock_request_post)
     def test_execute_will_post__op_request_with_params_when_form_data_param_set(self, mock_post):
-        self.http_op.execute(ReplicatorTest.SAMPLE_DEFINITION)
+        self.http_op.execute()
         self.assertIn(mock.call(data={'status': '', 'name': ''}, json=None, headers={"X-API-Key": "abcdef123"},
                                 url='https://server.de/pet/0/uploadImage'), mock_post.call_args_list)
 
@@ -152,7 +152,7 @@ class HttpOperationTest(TestCase):
     def test_execute_will_get_op_request_with_url_and_params_when_form_data_param_set(self, mock_get):
         self.http_op = create_http_op_with_random_mock('get', 'https://server.de/', 'pet/{petId}/uploadImage',
                                                        self.SAMPLE_OP_INFOS, {"X-API-Key": "abcdef123"})
-        self.http_op.execute(ReplicatorTest.SAMPLE_DEFINITION)
+        self.http_op.execute()
         self.assertIn(mock.call(params={'status': '', 'name': ''},
                                 url='https://server.de/pet/0/uploadImage', headers={"X-API-Key": "abcdef123"}),
                       mock_get.call_args_list)
@@ -161,7 +161,7 @@ class HttpOperationTest(TestCase):
     def test_execute_will_delete_op_request_with_url_only(self, mock_delete):
         self.http_op = create_http_op_with_random_mock('delete', 'https://server.de/', 'pet/{petId}/uploadImage',
                                                        self.SAMPLE_OP_INFOS, {"X-API-Key": "abcdef123"})
-        self.http_op.execute(ReplicatorTest.SAMPLE_DEFINITION)
+        self.http_op.execute()
         self.assertIn(mock.call(url='https://server.de/pet/0/uploadImage', headers={"X-API-Key": "abcdef123"}),
                       mock_delete.call_args_list)
 
@@ -169,6 +169,6 @@ class HttpOperationTest(TestCase):
     def test_execute_will_put_op_request_with_url_and_params_when_form_data_param_set(self, mock_put):
         self.http_op = create_http_op_with_random_mock('put', 'https://server.de/', 'pet/{petId}/uploadImage',
                                                        self.SAMPLE_OP_INFOS, {"X-API-Key": "abcdef123"})
-        self.http_op.execute(ReplicatorTest.SAMPLE_DEFINITION)
+        self.http_op.execute()
         self.assertIn(mock.call(data={'status': '', 'name': ''}, headers={"X-API-Key": "abcdef123"},
                                 url='https://server.de/pet/0/uploadImage'), mock_put.call_args_list)

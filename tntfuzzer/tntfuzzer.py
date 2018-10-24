@@ -8,19 +8,21 @@ from urllib.parse import urlparse
 from core.curlcommand import CurlCommand
 from core.httpoperation import HttpOperation
 from core.resultvalidatior import ResultValidator
+from core.replicator import Replicator
 from utils.strutils import StrUtils
 
-
-version = "2.0.0"
+version = "2.1.0"
 
 
 class TntFuzzer:
 
-    def __init__(self, url, iterations, headers, log_unexpected_errors_only):
+    def __init__(self, url, iterations, headers, log_unexpected_errors_only, max_string_length, use_string_pattern):
         self.url = url
         self.iterations = iterations
         self.headers = headers
         self.log_unexpected_errors_only = log_unexpected_errors_only
+        self.max_string_length = max_string_length
+        self.use_string_pattern = use_string_pattern
 
     def start(self):
         print('Fetching open API from: ' + self.url)
@@ -69,16 +71,18 @@ class TntFuzzer:
         type_definitions = spec['definitions']
         # the specifcation can list multiple schemes (http, https, ws, wss) - all should be tested.
         # Each scheme is a potentially different end point
+        replicator = Replicator(type_definitions, self.use_string_pattern, True, self.max_string_length)
         for protocol in schemes:
             for path_key in paths.keys():
                 path = paths[path_key]
 
                 for op_code in path.keys():
                     operation = HttpOperation(op_code, protocol + '://' + host_basepath, path_key,
-                                              op_infos=path[op_code], use_fuzzing=True, headers=self.headers)
+                                              replicator=replicator, op_infos=path[op_code], use_fuzzing=True,
+                                              headers=self.headers)
 
                     for x in range(self.iterations):
-                        response = operation.execute(type_definitions)
+                        response = operation.execute()
                         validator = ResultValidator()
                         log = validator.evaluate(response, path[op_code]['responses'], self.log_unexpected_errors_only)
                         curlcommand = CurlCommand(response.url, operation.op_code, operation.request_body, self.headers)
@@ -130,13 +134,22 @@ def main():
                         help='Send custom http headers for Cookies or api keys e.g. { \"X-API-Key\": \"abcdef12345\", '
                              '\"user-agent\": \"tntfuzzer\" }')
 
+    parser.add_argument('--string-patterns', dest='string-patterns', action='store_true',
+                        help='Use pattern generation, when string types are replicated for requests. The pattern '
+                             'has a fixed reproducable form. With the search tool the position of a pattern subset'
+                             'recalculated. Useful for finding positions of bufferoverflows.')
+
+    parser.add_argument('--max-random-string-len', dest='max-random-string-len', type=int, default=200,
+                        help='The maximum length of generated strings.')
+
     args = vars(parser.parse_args())
 
     if args['url'] is None:
         parser.print_usage()
     else:
         tnt = TntFuzzer(url=args['url'], iterations=args['iterations'], headers=args['headers'],
-                        log_unexpected_errors_only=not args['log_all'])
+                        log_unexpected_errors_only=not args['log_all'], use_string_pattern=args['string-patterns'],
+                        max_string_length=args['max-random-string-len'])
         tnt.start()
 
 

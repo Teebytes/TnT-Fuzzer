@@ -56,6 +56,23 @@ in the requirements-dev.txt and can be installed via pip:
 pip install -r requirements-dev.txt
 ```
 
+#### Testing
+
+For testing or development, have a look at the [swagger petstore example](http://petstore.swagger.io/). A local stub 
+server can easily be generated and run locally. 
+
+Run software tests using the following command:
+
+```
+$ cd tntfuzzer
+$ nosetests  tests/core/*.py tests/utils/*.py
+........................
+----------------------------------------------------------------------
+Ran 37 tests in 0.028s
+
+OK
+```
+
 ## Documentation
 
 ### Examples
@@ -90,21 +107,3 @@ When run, TnT-Fuzzer logs all responses in a table on commandline:
 | operation | url | response code | response message | response body | curl command |
 |---|---|---|---|---|---|
 | get       | http://localhost:8080/v2/apicall | 200 | Successful Operation | {'success': true} | ```curl -XGET -H "Content-type: application/json" -d '{'foo': bar}' 'http://localhost:8080/v2/apicall'``` |
-
-### Testing
-
-For testing or development, have a look at the [swagger petstore example](http://petstore.swagger.io/). A local stub 
-server can easily be generated and run locally. 
-
-Run software tests using the following command:
-
-```
-$ cd tntfuzzer
-$ nosetests  tests/core/*.py tests/utils/*.py
-........................
-----------------------------------------------------------------------
-Ran 29 tests in 0.028s
-
-OK
-```
- 
