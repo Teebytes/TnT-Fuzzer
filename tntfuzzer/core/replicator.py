@@ -3,6 +3,8 @@ import string
 import sys
 from random import Random
 
+from core.pattern import Pattern
+
 
 class ReplicationException(Exception):
     pass
@@ -11,16 +13,18 @@ class ReplicationException(Exception):
 class Replicator:
     """Replicates objects for requests in json format from definitions"""
 
-    def __init__(self, definitions, object_type, init_rand_values=False):
+    def __init__(self, definitions, use_string_pattern, init_rand_values, max_string_len=200):
         """Creates a Replicator for given type
 
         :parameter definitions all object definitions that could be referenced in the type that should be replicated
-        :parameter object_type the object type that should be replicated
+        :parameter use_string_pattern if valid, generated patterns instead of random character strings
         :parameter init_rand_values indicates if the replicated values should be random or - as per default - be 0 or ''
+        :parameter max_string_len maximum length of strings, which are generated
         """
-        self.object_type = object_type
         self.definitions = definitions
         self.init_rand_values = init_rand_values
+        self.use_string_pattern = use_string_pattern
+        self.max_string_len = max_string_len
         self.random = Random()
 
     def create_init_value(self, object_type):
@@ -31,7 +35,10 @@ class Replicator:
                 return 0
         if object_type == 'string':
             if self.init_rand_values:
-                return self.randomword(self.random.randint(0, 200))   # TODO: make length of rand string param-able
+                if self.use_string_pattern:
+                    return Pattern.gen(self.random.randint(0, self.max_string_len))
+                else:
+                    return self.randomword(self.random.randint(0, self.max_string_len))
             else:
                 return ''
         if object_type == 'number':
@@ -85,8 +92,8 @@ class Replicator:
         letters = string.ascii_lowercase
         return ''.join(self.random.choice(letters) for i in range(length))
 
-    def as_dict(self):
-        return self.replicate(self.object_type)
+    def as_dict(self, object_type):
+        return self.replicate(object_type)
 
-    def as_json(self):
-        return json.dumps(self.as_dict())
+    def as_json(self, object_type):
+        return json.dumps(self.as_dict(object_type))

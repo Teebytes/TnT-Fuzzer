@@ -188,25 +188,31 @@ class ReplicatorTest(TestCase):
     }
 
     def setUp(self):
-        self.replicator = Replicator(definitions=self.SAMPLE_DEFINITION, object_type='#/definitions/Tag')
+        self.replicator = Replicator(definitions=self.SAMPLE_DEFINITION,
+                                     use_string_pattern=True,
+                                     init_rand_values=False)
 
     def test_as_dict_creates_object_from_definition_and_has_all_fields(self):
-        self.replicator = Replicator(definitions=self.SAMPLE_DEFINITION, object_type='#/definitions/ApiResponse')
-        result = self.replicator.as_dict()
+        self.replicator = Replicator(definitions=self.SAMPLE_DEFINITION,
+                                     use_string_pattern=True,
+                                     init_rand_values=False)
+        result = self.replicator.as_dict('#/definitions/ApiResponse')
         self.assertIsNotNone(result['code'])
-        self.assertEquals(str(type(result['code'])), "<class 'int'>")
+        self.assertEqual(str(type(result['code'])), "<class 'int'>")
         self.assertIsNotNone(result['type'])
-        self.assertEquals(str(type(result['type'])), "<class 'str'>")
+        self.assertEqual(str(type(result['type'])), "<class 'str'>")
         self.assertIsNotNone(result['message'])
-        self.assertEquals(str(type(result['message'])), "<class 'str'>")
+        self.assertEqual(str(type(result['message'])), "<class 'str'>")
 
     def test_as_dict_creates_nested_object_from_definition_and_has_all_fields(self):
-        self.replicator = Replicator(definitions=self.SAMPLE_DEFINITION, object_type='#/definitions/Pet')
-        result = self.replicator.as_dict()
+        self.replicator = Replicator(definitions=self.SAMPLE_DEFINITION,
+                                     use_string_pattern=True,
+                                     init_rand_values=False)
+        result = self.replicator.as_dict('#/definitions/Pet')
         self.assertIsNotNone(result['id'])
         self.assertIsNotNone(result['name'])
         self.assertIsNotNone(result['photoUrls'])
-        self.assertEquals(str(type(result['photoUrls'])), "<class 'list'>")
+        self.assertEqual(str(type(result['photoUrls'])), "<class 'list'>")
 
         # nested array of objects
         self.assertIsNotNone(result['tags'])
@@ -214,12 +220,14 @@ class ReplicatorTest(TestCase):
 
         # nested object
         self.assertIsNotNone(result['category'])
-        self.assertEquals(str(type(result['category']['id'])), "<class 'int'>")
-        self.assertEquals(str(type(result['category']['name'])), "<class 'str'>")
+        self.assertEqual(str(type(result['category']['id'])), "<class 'int'>")
+        self.assertEqual(str(type(result['category']['name'])), "<class 'str'>")
 
     def test_as_dict_create_nested_object_not_in_definition_results_in_error(self):
-        self.replicator = Replicator(definitions=self.SAMPLE_DEFINITION, object_type='#/definitions/FailObject')
-        self.assertRaises(ReplicationException, self.replicator.as_dict)
+        self.replicator = Replicator(definitions=self.SAMPLE_DEFINITION,
+                                     use_string_pattern=True,
+                                     init_rand_values=False)
+        self.assertRaises(ReplicationException, self.replicator.as_dict, '#/definitions/FailObject')
 
     def test_as_json_returns_created_object_as_json(self):
-        self.assertEquals(self.replicator.as_json(), '{"id": 0, "name": ""}')
+        self.assertEqual(self.replicator.as_json('#/definitions/Tag'), '{"id": 0, "name": ""}')
