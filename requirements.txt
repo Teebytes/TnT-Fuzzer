@@ -6,7 +6,7 @@ GitPython==2.1.11
 gramfuzz==1.2.0
 idna==2.7
 PyJFuzz==1.1.0
-requests==2.19.1
+requests>=2.20.0
 smmap2==2.0.4
 termcolor==1.1.0
 urllib3==1.23
