@@ -11,7 +11,11 @@ from core.resultvalidatior import ResultValidator
 from core.replicator import Replicator
 from utils.strutils import StrUtils
 
-version = "2.1.0"
+version = "2.2.0"
+
+
+class SchemaException(Exception):
+    pass
 
 
 class TntFuzzer:
@@ -36,6 +40,24 @@ class TntFuzzer:
 
         spec = self.get_swagger_spec(self.url)
         specURL = urlparse(self.url)
+
+        if 'swagger' not in spec:
+            self.log_operation(None, self.url,
+                               {
+                                   "status_code": "000",
+                                   "documented_reason": "Specification: no version string found",
+                                   "body": "Specification: no version string found in Swagger spec"
+                               }, '')
+            raise SchemaException
+
+        if not spec['swagger'].startswith('2'):
+            self.log_operation(None, self.url,
+                               {
+                                   "status_code": "000",
+                                   "documented_reason": "Specification: wrong specification version",
+                                   "body": "Specification: version in swagger spec not supported"
+                               }, '')
+            raise SchemaException
 
         if 'schemes' in spec:
             schemes = spec['schemes']
@@ -64,8 +86,10 @@ class TntFuzzer:
             self.log_operation(None, self.url,
                                {
                                    "status_code": "000",
+                                   "documented_reason": "Specification: basePath entry missing from Swagger spec",
                                    "body": "Specification Error: basePath entry missing from Swagger spec"
                                }, '')
+            raise SchemaException
         host_basepath = host + spec['basePath']
         paths = spec['paths']
         type_definitions = spec['definitions']
@@ -89,6 +113,8 @@ class TntFuzzer:
 
                         # log to screen for now
                         self.log_operation(operation.op_code, response.url, log, curlcommand)
+
+        return True
 
     def log_operation(self, op_code, url, log, curlcommand):
         status_code = str(log['status_code'])
@@ -150,7 +176,10 @@ def main():
         tnt = TntFuzzer(url=args['url'], iterations=args['iterations'], headers=args['headers'],
                         log_unexpected_errors_only=not args['log_all'], use_string_pattern=args['string-patterns'],
                         max_string_length=args['max-random-string-len'])
-        tnt.start()
+        try:
+            tnt.start()
+        except SchemaException:
+            print('Error: Severe schema validation error. Please look in logs for more detailed error message.')
 
 
 if __name__ == "__main__":

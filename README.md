@@ -65,10 +65,10 @@ Run software tests using the following command:
 
 ```
 $ cd tntfuzzer
-$ nosetests  tests/core/*.py tests/utils/*.py
+$ nosetests  tests/core/*.py tests/utils/*.py tests/*.py
 ........................
 ----------------------------------------------------------------------
-Ran 37 tests in 0.028s
+Ran 41 tests in 0.028s
 
 OK
 ```
