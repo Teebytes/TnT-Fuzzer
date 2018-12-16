@@ -8,7 +8,7 @@ install:
   - pip install -r requirements-dev.txt
 # command to run tests
 script:
-  - cd tntfuzzer && nosetests tests/core/*.py tests/utils/*.py
+  - cd tntfuzzer && nosetests tests/core/*.py tests/utils/*.py tests/*.py
   - pycodestyle --max-line-length=120 ./tests/core/*.py
   - pycodestyle --max-line-length=120 ./tests/utils/*.py
   - pycodestyle --max-line-length=120 --ignore=W605,W504 ./*.py
