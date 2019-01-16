@@ -67,6 +67,8 @@ class Replicator:
         for prop in object_schema['properties']:
             if 'type' in object_schema['properties'][prop]:
                 prop_type = object_schema['properties'][prop]['type']
+            elif 'enum' in object_schema['properties']:
+                prop_type = 'enum'
             else:
                 prop_type = object_schema['properties'][prop]['$ref']
 
@@ -77,6 +79,9 @@ class Replicator:
                     array_type = object_schema['properties'][prop]['items']['type']
                 object_instance[prop] = list()
                 object_instance[prop].append(self.create_init_value(array_type))
+            elif prop_type == 'enum':
+                object_instance[prop] = list()
+                object_instance[prop].append(object_schema['properties'][prop])
             else:
                 object_instance[prop] = self.create_init_value(prop_type)
 

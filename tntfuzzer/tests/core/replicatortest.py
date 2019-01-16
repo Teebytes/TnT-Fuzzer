@@ -57,6 +57,12 @@ class ReplicatorTest(TestCase):
                 "name": "Category"
             }
         },
+        "Schema": {
+            "type": "string",
+            "properties": {
+                "enum": ["asc", "desc"]
+            },
+        },
         "User": {
             "type": "object",
             "properties": {
@@ -231,3 +237,11 @@ class ReplicatorTest(TestCase):
 
     def test_as_json_returns_created_object_as_json(self):
         self.assertEqual(self.replicator.as_json('#/definitions/Tag'), '{"id": 0, "name": ""}')
+
+    def test_as_json_returns_enum(self):
+        self.replicator = Replicator(definitions=self.SAMPLE_DEFINITION,
+                                     use_string_pattern=True,
+                                     init_rand_values=False)
+        result = self.replicator.as_json('#/definitions/Schema')
+        self.assertIsNotNone(result)
+        self.assertEqual(result, '{"enum": [["asc", "desc"]]}')
