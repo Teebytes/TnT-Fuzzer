@@ -105,18 +105,27 @@ class TntFuzzer:
                 path = paths[path_key]
 
                 for op_code in path.keys():
-                    operation = HttpOperation(op_code, protocol + '://' + host_basepath, path_key,
-                                              replicator=replicator, op_infos=path[op_code], use_fuzzing=True,
-                                              headers=self.headers)
+                    if op_code == 'parameters':
+                        pass
+                    else:
+                        operation = HttpOperation(op_code, protocol + '://' + host_basepath, path_key,
+                                                  replicator=replicator, op_infos=path[op_code], use_fuzzing=True,
+                                                  headers=self.headers)
 
-                    for x in range(self.iterations):
-                        response = operation.execute()
-                        validator = ResultValidator()
-                        log = validator.evaluate(response, path[op_code]['responses'], self.log_unexpected_errors_only)
-                        curlcommand = CurlCommand(response.url, operation.op_code, operation.request_body, self.headers)
+                        for x in range(self.iterations):
+                            response = operation.execute()
+                            validator = ResultValidator()
+                            log = validator.evaluate(response,
+                                                     path[op_code]['responses'],
+                                                     self.log_unexpected_errors_only)
 
-                        # log to screen for now
-                        self.log_operation(operation.op_code, response.url, log, curlcommand)
+                            curlcommand = CurlCommand(response.url,
+                                                      operation.op_code,
+                                                      operation.request_body,
+                                                      self.headers)
+
+                            # log to screen for now
+                            self.log_operation(operation.op_code, response.url, log, curlcommand)
 
         return True
 
