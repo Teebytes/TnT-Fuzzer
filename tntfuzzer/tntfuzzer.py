@@ -2,6 +2,7 @@ import argparse
 import json
 import requests
 import termcolor
+import sys
 
 from urllib.parse import urlparse
 
@@ -38,8 +39,11 @@ class TntFuzzer:
         host = None
         basePath = None
 
-        spec = self.get_swagger_spec(self.url)
-        specURL = urlparse(self.url)
+        try:
+            spec = self.get_swagger_spec(self.url)
+            specURL = urlparse(self.url)
+        except json.JSONDecodeError:
+            error_cant_connect()
 
         if 'swagger' not in spec:
             self.log_operation(None, self.url,
@@ -129,6 +133,11 @@ class TntFuzzer:
 
     def get_swagger_spec(self, url):
         return json.loads(requests.get(url=url).text)
+
+
+def error_cant_connect():
+    print('Unable to get swagger file :-(')
+    sys.exit(1)
 
 
 def main():
