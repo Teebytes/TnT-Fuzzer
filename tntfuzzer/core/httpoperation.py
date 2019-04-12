@@ -66,6 +66,9 @@ class HttpOperation:
         elif self.op_code == 'put':
             response = requests.put(url=url, data=form_data, headers=self.headers)
 
+        elif self.op_code == 'patch':
+            response = requests.patch(url=url, data=form_data, headers=self.headers)
+
         else:
             response = None
 
