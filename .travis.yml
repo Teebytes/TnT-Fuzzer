@@ -1,6 +1,7 @@
+dist: xenial
 language: python
 python:
-  - "3.6"
+  - "3.7"
 # command to install dependencies
 install:
   - git clone https://github.com/mseclab/PyJFuzz.git && cd PyJFuzz && python setup.py install && cd ..
