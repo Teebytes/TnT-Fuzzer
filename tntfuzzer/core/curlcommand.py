@@ -23,12 +23,9 @@ class CurlCommand:
         headers_string = " -H \"Content-type: application/json\""
 
         if self.headers is not None:
-            headers = json.loads(self.headers)
-            if not bool(headers):
-                return headers_string
-            else:
+            # self.headers is always a dict, because argparse has type=json.loads
+            headers_string += " "
+            for key, value in self.headers.items():
+                headers_string += "-H \"" + key + "\": \"" + value + "\""
                 headers_string += " "
-                for key, value in headers.items():
-                    headers_string += "-H \"" + key + "\": \"" + value + "\""
-                    headers_string += " "
         return headers_string.strip()

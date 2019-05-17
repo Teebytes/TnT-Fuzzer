@@ -132,8 +132,7 @@ class TntFuzzer:
                 StrUtils.print_log_row(op_code, url, status_code, documented_reason, body, curlcommand)
 
     def get_swagger_spec(self, url):
-        return json.loads(requests.get(url=url).text)
-
+        return json.loads(requests.get(url=url, headers=self.headers).text)
 
 def error_cant_connect():
     print('Unable to get swagger file :-(')
