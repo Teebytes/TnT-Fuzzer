@@ -134,6 +134,7 @@ class TntFuzzer:
     def get_swagger_spec(self, url):
         return json.loads(requests.get(url=url, headers=self.headers).text)
 
+
 def error_cant_connect():
     print('Unable to get swagger file :-(')
     sys.exit(1)
