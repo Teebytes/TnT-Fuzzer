@@ -11,10 +11,10 @@ class CurlCommand:
 
     def get(self):
         if not self.data or len(self.data) < 1:
-            curl_command = "curl -X" + self.method.upper() + self.generate_headers() \
+            curl_command = "curl -X" + self.method.upper() + " " + self.generate_headers() \
                            + " " + self.url
         else:
-            curl_command = "curl -X" + self.method.upper() + \
+            curl_command = "curl -X" + self.method.upper() + " " + \
                            self.generate_headers() + " -d '" + self.data + "' " + self.url
 
         return curl_command
