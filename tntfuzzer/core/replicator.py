@@ -54,7 +54,7 @@ class Replicator:
             else:
                 return False
         if object_type == 'object':
-            print(self.randomdict.items())
+            # FIXME: get props from object and rerun with data types
             return self.randomdict
         if object_type == 'file':
             return '/file/to/../something'  # TODO: react to init_rand_values
