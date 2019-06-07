@@ -3,16 +3,15 @@
 
 [![Build Status](https://travis-ci.com/Teebytes/TnT-Fuzzer.svg?branch=master)](https://travis-ci.com/Teebytes/TnT-Fuzzer) [![Downloads](https://pepy.tech/badge/tntfuzzer/month)](https://pepy.tech/project/tntfuzzer)
 ============
-OpenAPI (swagger) fuzzer written in python. This fuzzer is like dynamite for your API!
+TnT-Fuzzer is an OpenAPI (swagger) fuzzer written in python. It is like dynamite for your API!
 
-TnT-Fuzzer is designed to make fuzzing, robustness testing and validation of REST APIs easy and maintainable. After a 
-fuzzing run, the log files state the exact history of requests to reenact a crash or misuse. TnT-Fuzzer can be used 
-for penetration testing or continued testing of a service in development.  
+TnT-Fuzzer is designed to make fuzzing, robustness testing and validation of REST APIs easy and maintainable. After the fuzzer runs, the log files state the exact history of requests to reenact a crash or misuse. TnT-Fuzzer can be used
+for penetration testing or continued testing of a service in development.
 
 A project of [teebytes.net](https://teebytes.net/)
 
 ## Installation
-TnT-Fuzzer shifted support away from python 2 to  **python 3.7**. If you 
+TnT-Fuzzer shifted support away from python 2 to  **python 3.7**. If you
 need a python 2 compatible source, lookup TnT-Fuzzer Version 1.0.0 and below.
 
 ### With pip
@@ -23,17 +22,17 @@ pip install tntfuzzer
 ```
 
 ### From source
-Checkout git repository. Navigate into fresh cloned repository and install 
-all dependencies needed. All dependencies are listed in requirements.txt 
+Checkout git repository. Navigate into fresh cloned repository and install
+all dependencies needed. All dependencies are listed in requirements.txt
 and can be installed via pip:
 
 ```
 pip install -r requirements.txt
 ```
 
-However, at the moment of writing this guide the PyJFuzz dependency available 
-via [pypi](https://pypi.org/) is outdated only compatible with python 2 only. So, 
-when problems installing the PyJFuzz dependency occur, install the newest version 
+However, at the moment of writing this guide the PyJFuzz dependency available
+via [pypi](https://pypi.org/) is outdated only compatible with python 2 only. So,
+when problems installing the PyJFuzz dependency occur, install the newest version
 of it manually and then install the other dependencies:
 
 ```
@@ -58,8 +57,8 @@ pip install -r requirements-dev.txt
 
 #### Testing
 
-For testing or development, have a look at the [swagger petstore example](http://petstore.swagger.io/). A local stub 
-server can easily be generated and run locally. 
+For testing or development, have a look at the [swagger petstore example](http://petstore.swagger.io/). A local stub
+server can easily be generated and run locally.
 
 Run software tests using the following command:
 
@@ -85,24 +84,24 @@ tntfuzzer -h
 
 ![](docs/images/usage.png)
 
-The most important parameter is the **--url**, with the URL to your OpenAPI specification json file. 
+The most important parameter is the **--url**, with the URL to your OpenAPI specification json file.
 
-The parameter **--iterations** will specifiy how often an API call will be fuzzed. If 
+The parameter **--iterations** will specifiy how often an API call will be fuzzed. If
 the **--iterations** parameter is not specified, every API call is fuzzed only once.
 
-Per default only responses that are not documented in your Service's OpenAPI specification are logged. This way only 
-undocumented errors are logged. If you want all fuzz responses to be logged, you have to specify that by 
-setting the **--log_all** parameter. 
+Per default only responses that are not documented in your Service's OpenAPI specification are logged. This way only
+undocumented errors are logged. If you want all fuzz responses to be logged, you have to specify that by
+setting the **--log_all** parameter.
 
-So following example run will fuzz every API call specified in the swagger.json with 100 permutations each. All 
-responses received from the server are logged: 
+So following example run will fuzz every API call specified in the swagger.json with 100 permutations each. All
+responses received from the server are logged:
 ```
 tntfuzzer --url http://example.com:8080/v2/swagger.json --iterations 100 --log_all
 ```
 
 ### Log
 
-When run, TnT-Fuzzer logs all responses in a table on commandline: 
+When run, TnT-Fuzzer logs all responses in a table on commandline:
 
 | operation | url | response code | response message | response body | curl command |
 |---|---|---|---|---|---|
