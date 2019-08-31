@@ -93,8 +93,15 @@ Per default only responses that are not documented in your Service's OpenAPI spe
 undocumented errors are logged. If you want all fuzz responses to be logged, you have to specify that by
 setting the **--log_all** parameter.
 
+If you want to connect to servers using self-signed certificates, use the **--ignore-cert-errors**.
+
+Sometimes an OpenAPI file will contain an invalid host name, or point to the wrong server. If you use the **--host**
+option you can override this without making a local copy of the file. Same happens with **--basepath** that let you
+specify a different basepath for the API. 
+
 So following example run will fuzz every API call specified in the swagger.json with 100 permutations each. All
 responses received from the server are logged:
+
 ```
 tntfuzzer --url http://example.com:8080/v2/swagger.json --iterations 100 --log_all
 ```
