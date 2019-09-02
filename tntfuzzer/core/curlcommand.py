@@ -10,7 +10,7 @@ class CurlCommand:
         self.headers = headers
 
         if ignore_tls:
-            self.ignore_tls = "-k " # short for --insecure
+            self.ignore_tls = "-k "  # short for --insecure
         else:
             self.ignore_tls = ""
 

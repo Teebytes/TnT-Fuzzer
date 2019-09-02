@@ -33,7 +33,7 @@ class HttpOperation:
     def execute(self):
         url = self.url
         form_data = dict()
-        verify_tls = not self.ignore_tls # ignore_tls defaults to False, but verify=False will disable TLS verification
+        verify_tls = not self.ignore_tls  # ignore_tls defaults to False, but verify=False will disable TLS verification
 
         if 'parameters' in self.op_infos:
             for parameter in self.op_infos['parameters']:
@@ -57,7 +57,8 @@ class HttpOperation:
             if bool(form_data):
                 response = requests.post(url=url, data=form_data, json=None, headers=self.headers, verify=verify_tls)
             else:
-                response = requests.post(url=url, data=None, json=self.request_body, headers=self.headers, verify=verify_tls)
+                response = requests.post(url=url, data=None, json=self.request_body, headers=self.headers,
+                                         verify=verify_tls)
 
         elif self.op_code == 'get':
             response = requests.get(url=url, params=form_data, headers=self.headers, verify=verify_tls)

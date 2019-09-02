@@ -151,7 +151,8 @@ class HttpOperationTest(TestCase):
                                                        self.SAMPLE_OP_INFOS, {"X-API-Key": "abcdef123"})
         self.http_op.execute()
         self.assertIn(mock.call(params={'status': '', 'name': ''},
-                                url='https://server.de/pet/0/uploadImage', headers={"X-API-Key": "abcdef123"}, verify=False),
+                                url='https://server.de/pet/0/uploadImage',
+                                headers={"X-API-Key": "abcdef123"}, verify=False),
                       mock_get.call_args_list)
 
     @patch('requests.delete', side_effect=mock_request_delete)
@@ -159,7 +160,8 @@ class HttpOperationTest(TestCase):
         self.http_op = create_http_op_with_random_mock('delete', 'https://server.de/', 'pet/{petId}/uploadImage',
                                                        self.SAMPLE_OP_INFOS, {"X-API-Key": "abcdef123"})
         self.http_op.execute()
-        self.assertIn(mock.call(url='https://server.de/pet/0/uploadImage', headers={"X-API-Key": "abcdef123"}, verify=False),
+        self.assertIn(mock.call(url='https://server.de/pet/0/uploadImage',
+                                headers={"X-API-Key": "abcdef123"}, verify=False),
                       mock_delete.call_args_list)
 
     @patch('requests.put', side_effect=mock_request_put)

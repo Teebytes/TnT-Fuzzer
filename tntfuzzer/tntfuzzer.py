@@ -21,15 +21,15 @@ class SchemaException(Exception):
 
 class TntFuzzer:
 
-    def __init__(self, url, iterations, headers, log_unexpected_errors_only, 
-                    max_string_length, use_string_pattern, ignore_tls=False, host=None, basepath=None):
+    def __init__(self, url, iterations, headers, log_unexpected_errors_only,
+                 max_string_length, use_string_pattern, ignore_tls=False, host=None, basepath=None):
         self.url = url
         self.iterations = iterations
         self.headers = headers
         self.log_unexpected_errors_only = log_unexpected_errors_only
         self.max_string_length = max_string_length
         self.use_string_pattern = use_string_pattern
-        self.ignore_tls = ignore_tls        
+        self.ignore_tls = ignore_tls
         self.host = host
         self.basepath = basepath
 
@@ -125,7 +125,8 @@ class TntFuzzer:
                         response = operation.execute()
                         validator = ResultValidator()
                         log = validator.evaluate(response, path[op_code]['responses'], self.log_unexpected_errors_only)
-                        curlcommand = CurlCommand(response.url, operation.op_code, operation.request_body, self.headers, self.ignore_tls)
+                        curlcommand = CurlCommand(response.url, operation.op_code, operation.request_body, self.headers,
+                                                  self.ignore_tls)
 
                         # log to screen for now
                         self.log_operation(operation.op_code, response.url, log, curlcommand)
@@ -144,7 +145,7 @@ class TntFuzzer:
                 StrUtils.print_log_row(op_code, url, status_code, documented_reason, body, curlcommand)
 
     def get_swagger_spec(self, url):
-        verify_tls = not self.ignore_tls # ignore_tls defaults to False, but verify=False will disable TLS verification
+        verify_tls = not self.ignore_tls  # ignore_tls defaults to False, but verify=False will disable TLS verification
         return json.loads(requests.get(url=url, headers=self.headers, verify=verify_tls).text)
 
 
@@ -158,7 +159,8 @@ def main():
     print(termcolor.colored(r'\__    ___/__\__    ___/     \_   _____/_ __________________ ___________ ', color='red'))
     print(termcolor.colored(r'  |    | /    \|    |  ______ |    __)|  |  \___   /\___   // __ \_  __ \\', color='red'))
     print(termcolor.colored(r'  |    ||   |  \    | /_____/ |     \ |  |  //    /  /    /\  ___/|  | \/', color='red'))
-    print(termcolor.colored(r'  |____||___|  /____|         \___  / |____//_____ \/_____ \\\\___  >__|   ', color='red'))
+    print(termcolor.colored(r'  |____||___|  /____|         \___  / |____//_____ \/_____ \\\\___  >__|   ',
+                            color='red'))
     print(termcolor.colored(r'    Dynamite ', 'green') + termcolor.colored(r'\/', 'red') +
           termcolor.colored(r' for your API!', 'green') +
           termcolor.colored(r'     \/              \/      \/    \/    ', 'red') +
@@ -189,7 +191,7 @@ def main():
 
     parser.add_argument('--max-random-string-len', dest='max-random-string-len', type=int, default=200,
                         help='The maximum length of generated strings.')
-    
+
     parser.add_argument('--ignore-cert-errors', dest='ignore-tls', action='store_true', default=False,
                         help='Ignore TLS errors, like self-signed certificates.')
 
@@ -206,7 +208,7 @@ def main():
     else:
         tnt = TntFuzzer(url=args['url'], iterations=args['iterations'], headers=args['headers'],
                         log_unexpected_errors_only=not args['log_all'], use_string_pattern=args['string-patterns'],
-                        max_string_length=args['max-random-string-len'], ignore_tls=args["ignore-tls"], 
+                        max_string_length=args['max-random-string-len'], ignore_tls=args["ignore-tls"],
                         host=args["host"], basepath=args["basepath"])
         try:
             tnt.start()
