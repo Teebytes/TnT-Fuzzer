@@ -9,7 +9,7 @@ from pyjfuzz.core.pjf_factory import PJFFactory
 
 
 class HttpOperation:
-    def __init__(self, op_code, host_basepath, path, op_infos, headers, replicator, use_fuzzing=True):
+    def __init__(self, op_code, host_basepath, path, op_infos, headers, replicator, use_fuzzing=True, ignore_tls=False):
         self.op_code = op_code
         self.url = host_basepath + path
         self.op_infos = op_infos
@@ -18,6 +18,7 @@ class HttpOperation:
         self.fuzzer = None
         self.request_body = None
         self.headers = headers
+        self.ignore_tls = ignore_tls
         self.random = Random()
 
     def fuzz(self, json_str):
@@ -32,6 +33,7 @@ class HttpOperation:
     def execute(self):
         url = self.url
         form_data = dict()
+        verify_tls = not self.ignore_tls  # ignore_tls defaults to False, but verify=False will disable TLS verification
 
         if 'parameters' in self.op_infos:
             for parameter in self.op_infos['parameters']:
@@ -53,21 +55,22 @@ class HttpOperation:
 
         if self.op_code == 'post':
             if bool(form_data):
-                response = requests.post(url=url, data=form_data, json=None, headers=self.headers)
+                response = requests.post(url=url, data=form_data, json=None, headers=self.headers, verify=verify_tls)
             else:
-                response = requests.post(url=url, data=None, json=self.request_body, headers=self.headers)
+                response = requests.post(url=url, data=None, json=self.request_body, headers=self.headers,
+                                         verify=verify_tls)
 
         elif self.op_code == 'get':
-            response = requests.get(url=url, params=form_data, headers=self.headers)
+            response = requests.get(url=url, params=form_data, headers=self.headers, verify=verify_tls)
 
         elif self.op_code == 'delete':
-            response = requests.delete(url=url, headers=self.headers)
+            response = requests.delete(url=url, headers=self.headers, verify=verify_tls)
 
         elif self.op_code == 'put':
-            response = requests.put(url=url, data=form_data, headers=self.headers)
+            response = requests.put(url=url, data=form_data, headers=self.headers, verify=verify_tls)
 
         elif self.op_code == 'patch':
-            response = requests.patch(url=url, data=form_data, headers=self.headers)
+            response = requests.patch(url=url, data=form_data, headers=self.headers, verify=verify_tls)
 
         else:
             response = None
