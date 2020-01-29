@@ -6,6 +6,7 @@ from random import Random
 
 from pyjfuzz.core.pjf_configuration import PJFConfiguration
 from pyjfuzz.core.pjf_factory import PJFFactory
+from pyjfuzz.core.errors import PJFInvalidType
 
 
 class HttpOperation:
@@ -29,7 +30,7 @@ class HttpOperation:
             try:
                 config = PJFConfiguration(Namespace(json=json.loads(json_str), nologo=True, level=6))
                 self.fuzzer = PJFFactory(config)
-            except:
+            except PJFInvalidType:
                 return json_str
         return self.fuzzer.fuzzed
 
@@ -111,7 +112,7 @@ class HttpOperation:
                     list_bodyitem.append(self.replicator.as_dict(object_type))
                 else:
                     object_type = parameter['schema']['items']['type']
-                    list_bodyitem.append(self.replicator.create_init_value(object_type))                
+                    list_bodyitem.append(self.replicator.create_init_value(object_type))
                 result += json.dumps(list_bodyitem)
             else:
                 object_type = parameter['schema']['type']

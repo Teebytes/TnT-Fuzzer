@@ -14,7 +14,7 @@ class CurlCommandTest(TestCase):
         curlcommand = CurlCommand(url, method, data, headers)
 
         self.assertEqual(curlcommand.get(), "curl -XGET -H \"Content-type: application/json\" -d "
-                                             "'{\"id\": 1, \"name\": \"Foo\"}' http://example.com/api/v2/test")
+                                            "'{\"id\": 1, \"name\": \"Foo\"}' http://example.com/api/v2/test")
 
     def test_post_method(self):
         method = "pOsT"
@@ -24,7 +24,7 @@ class CurlCommandTest(TestCase):
         curlcommand = CurlCommand(url, method, data, headers)
 
         self.assertEqual(curlcommand.get(), "curl -XPOST -H \"Content-type: application/json\" -d "
-                                             "'{\"id\": 2, \"name\": \"Bar\"}' http://example.com/api/post")
+                                            "'{\"id\": 2, \"name\": \"Bar\"}' http://example.com/api/post")
 
     def test_empty_data(self):
         method = "get"
@@ -33,7 +33,7 @@ class CurlCommandTest(TestCase):
         headers = json.loads('{}')
         curlcommand = CurlCommand(url, method, data, headers)
         self.assertEqual(curlcommand.get(), "curl -XGET -H \"Content-type: application/json\" "
-                                             "http://example.com/api/v2/list")
+                                            "http://example.com/api/v2/list")
 
     def test_generate_headers(self):
         method = "get"
