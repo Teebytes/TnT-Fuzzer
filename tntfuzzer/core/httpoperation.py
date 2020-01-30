@@ -6,12 +6,13 @@ from random import Random
 
 from pyjfuzz.core.pjf_configuration import PJFConfiguration
 from pyjfuzz.core.pjf_factory import PJFFactory
+from pyjfuzz.core.errors import PJFInvalidType
 
 
 class HttpOperation:
     def __init__(self, op_code, host_basepath, path, op_infos, headers, replicator, use_fuzzing=True, ignore_tls=False):
         self.op_code = op_code
-        self.url = host_basepath + path
+        self.url = host_basepath.rstrip("/") + "/" + path.lstrip("/")
         self.op_infos = op_infos
         self.use_fuzzing = use_fuzzing
         self.replicator = replicator
@@ -26,8 +27,11 @@ class HttpOperation:
             return json_str
 
         if self.fuzzer is None:
-            config = PJFConfiguration(Namespace(json=json.loads(json_str), nologo=True, level=6))
-            self.fuzzer = PJFFactory(config)
+            try:
+                config = PJFConfiguration(Namespace(json=json.loads(json_str), nologo=True, level=6))
+                self.fuzzer = PJFFactory(config)
+            except PJFInvalidType:
+                return json_str
         return self.fuzzer.fuzzed
 
     def execute(self):
@@ -100,11 +104,22 @@ class HttpOperation:
 
     def create_body(self, parameter):
         result = ''
-        if 'type' in parameter['schema'] and parameter['schema']['type'] == 'array':
-            object_type = parameter['schema']['items']['$ref']
-            list_bodyitem = list()
-            list_bodyitem.append(self.replicator.as_dict(object_type))
-            result += json.dumps(list_bodyitem)
+        if 'type' in parameter['schema']:
+            if parameter['schema']['type'] == 'array':
+                list_bodyitem = list()
+                if '$ref' in parameter['schema']['items']:
+                    object_type = parameter['schema']['items']['$ref']
+                    list_bodyitem.append(self.replicator.as_dict(object_type))
+                else:
+                    object_type = parameter['schema']['items']['type']
+                    list_bodyitem.append(self.replicator.create_init_value(object_type))
+                result += json.dumps(list_bodyitem)
+            else:
+                object_type = parameter['schema']['type']
+                object_value = self.replicator.create_init_value(object_type)
+                if object_type == 'string':
+                    object_value = '"' + object_value + '"'
+                result += object_value
         else:
             object_type = parameter['schema']['$ref']
             result += self.replicator.as_json(object_type)

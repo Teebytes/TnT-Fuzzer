@@ -2,6 +2,7 @@ import json
 import string
 import sys
 from random import Random
+from randomdict import RandomDict
 
 from core.pattern import Pattern
 
@@ -26,6 +27,7 @@ class Replicator:
         self.use_string_pattern = use_string_pattern
         self.max_string_len = max_string_len
         self.random = Random()
+        self.randomdict = RandomDict()
 
     def create_init_value(self, object_type):
         if object_type == 'integer':
@@ -51,6 +53,9 @@ class Replicator:
                 return bool(self.random.getrandbits(1))
             else:
                 return False
+        if object_type == 'object':
+            # FIXME: get props from object and rerun with data types
+            return self.randomdict.__dict__
         if object_type == 'file':
             return '/file/to/../something'  # TODO: react to init_rand_values
         return self.replicate(object_type)
@@ -77,6 +82,7 @@ class Replicator:
                     array_type = object_schema['properties'][prop]['items']['type']
                 object_instance[prop] = list()
                 object_instance[prop].append(self.create_init_value(array_type))
+
             else:
                 object_instance[prop] = self.create_init_value(prop_type)
 
