@@ -65,7 +65,8 @@ class HttpOperation:
                     if 'array' == type_cls:
                         if 'items' in parameter and 'type' in parameter['items']:
                             type_cls = parameter['items']['type']
-                        if 'schema' in parameter and 'items' in parameter['schema'] and 'type' in parameter['schema']['items']:
+                        if ('schema' in parameter and 'items' in parameter['schema'] and
+                           'type' in parameter['schema']['items']):
                             type_cls = parameter['schema']['items']['type']
                         else:
                             type_cls = parameter['schema']['items']['$ref'].split('/')[-1]
