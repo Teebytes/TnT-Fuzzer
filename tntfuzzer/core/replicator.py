@@ -69,6 +69,8 @@ class Replicator:
 
         object_schema = self.definitions[object_class]
         object_instance = {}
+        if 'enum' in object_schema:
+            return self.random.choice(object_schema['enum'])
         for prop in object_schema['properties']:
             if 'type' in object_schema['properties'][prop]:
                 prop_type = object_schema['properties'][prop]['type']

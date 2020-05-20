@@ -22,7 +22,8 @@ class SchemaException(Exception):
 class TntFuzzer:
 
     def __init__(self, url, iterations, headers, log_unexpected_errors_only,
-                 max_string_length, use_string_pattern, ignore_tls=False, host=None, basepath=None):
+                 max_string_length, use_string_pattern, ignore_tls=False,
+                 host=None, basepath=None, ignored_paths=[]):
         self.url = url
         self.iterations = iterations
         self.headers = headers
@@ -32,6 +33,7 @@ class TntFuzzer:
         self.ignore_tls = ignore_tls
         self.host = host
         self.basepath = basepath
+        self.ignored_paths = ignored_paths
 
         if self.ignore_tls:
             # removes warnings for insecure connections
@@ -53,25 +55,37 @@ class TntFuzzer:
         except json.JSONDecodeError:
             error_cant_connect()
 
-        if 'swagger' not in spec:
-            self.log_operation(None, self.url,
-                               {
-                                   "status_code": "000",
-                                   "documented_reason": "Specification: no version string found",
-                                   "body": "Specification: no version string found in Swagger spec"
-                               }, '')
-            raise SchemaException
+        if 'openapi' not in spec:
+            if 'swagger' not in spec:
+                self.log_operation(None, self.url,
+                                   {
+                                       "status_code": "000",
+                                       "documented_reason": "Specification: no version string found",
+                                       "body": "Specification: no version string found in Swagger spec"
+                                   }, '')
+                raise SchemaException
 
-        if not spec['swagger'].startswith('2'):
+            if not spec['swagger'].startswith('2'):
+                self.log_operation(None, self.url,
+                                   {
+                                       "status_code": "000",
+                                       "documented_reason": "Specification: wrong specification version",
+                                       "body": "Specification: version in swagger spec not supported"
+                                   }, '')
+                raise SchemaException
+        elif not spec['openapi'].startswith('3'):
             self.log_operation(None, self.url,
                                {
                                    "status_code": "000",
                                    "documented_reason": "Specification: wrong specification version",
-                                   "body": "Specification: version in swagger spec not supported"
+                                   "body": "Specification: version in openapi spec not supported"
                                }, '')
             raise SchemaException
-
-        if 'schemes' in spec:
+        baseUris = []
+        if 'servers' in spec and len(spec['servers']) > 0:
+            for server in spec['servers']:
+                baseUris.append(server['url'])
+        elif 'schemes' in spec:
             schemes = spec['schemes']
         else:
             # fake the array we'd find in the spec
@@ -81,43 +95,58 @@ class TntFuzzer:
                                    "status_code": "000",
                                    "documented_reason": "Specification: no schemes entry, fallback to spec URL scheme",
                                    "body": "Specification: host entry not present in Swagger spec"}, '')
+        if len(baseUris) == 0:
+            if self.host:
+                host = self.host
+            elif 'host' in spec:
+                host = spec['host']
+            else:
+                host = specURL.netloc
+                self.log_operation(None, self.url,
+                                   {
+                                       "status_code": "000",
+                                       "documented_reason": "Specification: no host entry, fallback to spec URL host",
+                                       "body": "Specification: schemes entry not present in Swagger spec"
+                                   }, '')
 
-        if self.host:
-            host = self.host
-        elif 'host' in spec:
-            host = spec['host']
-        else:
-            host = specURL.netloc
-            self.log_operation(None, self.url,
-                               {
-                                   "status_code": "000",
-                                   "documented_reason": "Specification: no host entry, fallback to spec URL host",
-                                   "body": "Specification: schemes entry not present in Swagger spec"
-                               }, '')
-
-        # There is no nice way to derive the basePath from the spec's URL. They *have* to include it
-        if 'basePath' not in spec:
-            self.log_operation(None, self.url,
-                               {
-                                   "status_code": "000",
-                                   "documented_reason": "Specification: basePath entry missing from Swagger spec",
-                                   "body": "Specification Error: basePath entry missing from Swagger spec"
-                               }, '')
-            raise SchemaException
-        basePath = self.basepath if self.basepath else spec['basePath']
-        host_basepath = host + basePath
+            # There is no nice way to derive the basePath from the spec's URL. They *have* to include it
+            if 'basePath' not in spec:
+                self.log_operation(None, self.url,
+                                   {
+                                       "status_code": "000",
+                                       "documented_reason": "Specification: basePath entry missing from Swagger spec",
+                                       "body": "Specification Error: basePath entry missing from Swagger spec"
+                                   }, '')
+                raise SchemaException
+            basePath = self.basepath if self.basepath else spec['basePath']
+            host_basepath = host + basePath
+            for protocol in schemes:
+                baseUris.append(protocol + '://' + host_basepath)
 
         paths = spec['paths']
-        type_definitions = spec['definitions']
+        if 'definitions' in spec:
+            type_definitions = spec['definitions']
+        elif 'components' in spec and 'schemas' in spec['components']:
+            type_definitions = spec['components']['schemas']
+        else:
+            self.log_operation(None, self.url,
+                               {
+                                   "status_code": "000",
+                                   "documented_reason": "Specification: type definitions missing from Swagger spec",
+                                   "body": "Specification Error: type definitions missing from Swagger spec"
+                               }, '')
+            raise SchemaException
         # the specifcation can list multiple schemes (http, https, ws, wss) - all should be tested.
         # Each scheme is a potentially different end point
         replicator = Replicator(type_definitions, self.use_string_pattern, True, self.max_string_length)
-        for protocol in schemes:
+        for baseUri in baseUris:
             for path_key in paths.keys():
+                if path_key in self.ignored_paths:
+                    continue
                 path = paths[path_key]
 
                 for op_code in path.keys():
-                    operation = HttpOperation(op_code, protocol + '://' + host_basepath, path_key,
+                    operation = HttpOperation(op_code, baseUri, path_key,
                                               replicator=replicator, op_infos=path[op_code], use_fuzzing=True,
                                               headers=self.headers, ignore_tls=self.ignore_tls)
 
@@ -201,6 +230,9 @@ def main():
     parser.add_argument('--basepath', type=str,
                         help='Overrides the API basePath specified within the swagger file.')
 
+    parser.add_argument('--ignored-paths', type=json.loads, dest='ignored-paths',
+                        help='List of the API paths to exclude from fuzzing.')
+
     args = vars(parser.parse_args())
 
     if args['url'] is None:
@@ -209,7 +241,7 @@ def main():
         tnt = TntFuzzer(url=args['url'], iterations=args['iterations'], headers=args['headers'],
                         log_unexpected_errors_only=not args['log_all'], use_string_pattern=args['string-patterns'],
                         max_string_length=args['max-random-string-len'], ignore_tls=args["ignore-tls"],
-                        host=args["host"], basepath=args["basepath"])
+                        host=args["host"], basepath=args["basepath"], ignored_paths=args['ignored-paths'])
         try:
             tnt.start()
         except SchemaException:
