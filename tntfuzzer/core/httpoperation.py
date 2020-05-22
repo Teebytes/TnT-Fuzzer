@@ -43,18 +43,35 @@ class HttpOperation:
             for parameter in self.op_infos['parameters']:
                 # catch path parameters and replace them in url
                 if 'path' == parameter['in']:
-                    url = self.replace_url_parameter(url, parameter['name'], parameter['type'])
+                    if 'type' in parameter:
+                        parameter_type = parameter['type']
+                    elif 'type' in parameter['schema']:
+                        parameter_type = parameter['schema']['type']
+                    else:
+                        parameter_type = parameter['schema']['$ref'].split('/')[-1]
+                    url = self.replace_url_parameter(url, parameter['name'], parameter_type)
 
                 if 'body' == parameter['in']:
                     self.request_body = self.create_body(parameter)
                     self.request_body = self.fuzz(self.request_body)
 
                 if 'formData' == parameter['in'] or 'query' == parameter['in']:
-                    type_cls = parameter['type']
+                    if 'type' in parameter:
+                        type_cls = parameter['type']
+                    elif 'type' in parameter['schema']:
+                        type_cls = parameter['schema']['type']
+                    else:
+                        type_cls = parameter['schema']['$ref'].split('/')[-1]
                     if 'array' == type_cls:
-                        type_cls = parameter['items']['type']
+                        if 'items' in parameter and 'type' in parameter['items']:
+                            type_cls = parameter['items']['type']
+                        if ('schema' in parameter and 'items' in parameter['schema'] and
+                           'type' in parameter['schema']['items']):
+                            type_cls = parameter['schema']['items']['type']
+                        else:
+                            type_cls = parameter['schema']['items']['$ref'].split('/')[-1]
 
-                    if self.is_parameter_not_optional_but_randomize(parameter['required']):
+                    if 'required' in parameter and self.is_parameter_not_optional_but_randomize(parameter['required']):
                         form_data[parameter['name']] = self.create_form_parameter(type_cls)
 
         if self.op_code == 'post':
