@@ -12,7 +12,7 @@ from core.replicator import Replicator
 from utils.strutils import StrUtils
 from urllib.parse import urlparse
 
-version = "2.3.0"
+version = "2.3.1"
 
 
 class SchemaException(Exception):
@@ -230,7 +230,7 @@ def main():
     parser.add_argument('--basepath', type=str,
                         help='Overrides the API basePath specified within the swagger file.')
 
-    parser.add_argument('--ignored-paths', type=json.loads, dest='ignored-paths',
+    parser.add_argument('--ignored-paths', type=json.loads, dest='ignored-paths', default=[],
                         help='List of the API paths to exclude from fuzzing.')
 
     args = vars(parser.parse_args())
