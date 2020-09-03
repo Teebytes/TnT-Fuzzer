@@ -8,18 +8,25 @@ TnT-Fuzzer is an OpenAPI (swagger) fuzzer written in python. It is like dynamite
 TnT-Fuzzer is designed to make fuzzing, robustness testing and validation of REST APIs easy and maintainable. After the fuzzer runs, the log files state the exact history of requests to reenact a crash or misuse. TnT-Fuzzer can be used
 for penetration testing or continued testing of a service in development.
 
-A project of [teebytes.net](https://teebytes.net/)
-
 ## Installation
 TnT-Fuzzer shifted support away from python 2 to  **python 3.7**. If you
 need a python 2 compatible source, lookup TnT-Fuzzer Version 1.0.0 and below.
 
-### With pip
-Just install tntfuzzer with pip and its ready for usage:
+### With docker
+Manual installation (see below) can be a little tricky, due to some dependencies not available for **python 3**. If you just want to 
+run the fuzzer via the commandline, the installation via docker is a fast and reliable choice. You won't even need a python installation on your system. Just run the docker build with a local tag of your choice:
 
 ```
-pip install tntfuzzer
+docker build . -t YOUR_TAG
 ```
+
+Then after the build of the image is complete, running tntfuzzer in a container is as easy as the following:
+
+```
+docker run YOUR_TAG python tntfuzzer/tntfuzzer.py --url https://petstore.swagger.io/v2/swagger.json --iterations 100 --log_all
+```
+
+This command is equal to the command used in the examples section. For more information on use, see below.
 
 ### From source
 Checkout git repository. Navigate into fresh cloned repository and install
