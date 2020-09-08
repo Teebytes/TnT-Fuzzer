@@ -207,7 +207,7 @@ def main():
 
     parser.add_argument('--log_all', action='store_true',
                         help='If set, all responses are logged. The expected responses and the '
-                             'unexpected ones. Per default only unexpected responses are logged.')
+                             'unexpected ones. By default only unexpected responses are logged.')
 
     parser.add_argument('--headers', type=json.loads,
                         help='Send custom http headers for Cookies or api keys e.g. { \"X-API-Key\": \"abcdef12345\", '
