@@ -13,3 +13,5 @@ jobs:
     steps:
       - name: Bandit Check
         uses: jpetrucciani/bandit-check@1.6.2
+        with:
+          path: './tntfuzzer'
