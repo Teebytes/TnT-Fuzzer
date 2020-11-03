@@ -1,0 +1,15 @@
+name: SAST (bandit)
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Bandit Check
+        uses: jpetrucciani/bandit-check@1.6.2
