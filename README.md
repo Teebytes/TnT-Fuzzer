@@ -1,7 +1,7 @@
 
 ![](docs/images/logo.jpg)
 
-[![Build Status](https://travis-ci.com/Teebytes/TnT-Fuzzer.svg?branch=master)](https://travis-ci.com/Teebytes/TnT-Fuzzer) [![Downloads](https://pepy.tech/badge/tntfuzzer/month)](https://pepy.tech/project/tntfuzzer) [![codebeat badge](https://codebeat.co/badges/baec008b-eaf2-451f-b2ff-758c0c8551f0)](https://codebeat.co/projects/github-com-teebytes-tnt-fuzzer-master)
+[![Build Status](https://travis-ci.com/Teebytes/TnT-Fuzzer.svg?branch=master)](https://travis-ci.com/Teebytes/TnT-Fuzzer) [![Downloads](https://pepy.tech/badge/tntfuzzer/month)](https://pepy.tech/project/tntfuzzer) [![codebeat badge](https://codebeat.co/badges/baec008b-eaf2-451f-b2ff-758c0c8551f0)](https://codebeat.co/projects/github-com-teebytes-tnt-fuzzer-master) [![security: bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit)
 ============
 TnT-Fuzzer is an OpenAPI (swagger) fuzzer written in python. It is like dynamite for your API!
 
