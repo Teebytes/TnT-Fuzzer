@@ -12,9 +12,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-      - run: git checkout HEAD^
       - name: Bandit Check
         uses: jpetrucciani/bandit-check@1.6.2
         with:
