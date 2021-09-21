@@ -23,7 +23,7 @@ class TntFuzzer:
 
     def __init__(self, url, iterations, headers, log_unexpected_errors_only,
                  max_string_length, use_string_pattern, ignore_tls=False,
-                 host=None, basepath=None, ignored_paths=[]):
+                 host=None, basepath=None, ignored_paths=[], proxy=None):
         self.url = url
         self.iterations = iterations
         self.headers = headers
@@ -34,6 +34,7 @@ class TntFuzzer:
         self.host = host
         self.basepath = basepath
         self.ignored_paths = ignored_paths
+        self.proxy = proxy
 
         if self.ignore_tls:
             # removes warnings for insecure connections
@@ -148,14 +149,14 @@ class TntFuzzer:
                 for op_code in path.keys():
                     operation = HttpOperation(op_code, baseUri, path_key,
                                               replicator=replicator, op_infos=path[op_code], use_fuzzing=True,
-                                              headers=self.headers, ignore_tls=self.ignore_tls)
+                                              headers=self.headers, ignore_tls=self.ignore_tls, proxy=self.proxy)
 
                     for _ in range(self.iterations):
                         response = operation.execute()
                         validator = ResultValidator()
                         log = validator.evaluate(response, path[op_code]['responses'], self.log_unexpected_errors_only)
                         curlcommand = CurlCommand(response.url, operation.op_code, operation.request_body, self.headers,
-                                                  self.ignore_tls)
+                                                  self.ignore_tls, proxy=self.proxy)
 
                         # log to screen for now
                         self.log_operation(operation.op_code, response.url, log, curlcommand)
@@ -233,6 +234,10 @@ def main():
     parser.add_argument('--ignored-paths', type=json.loads, dest='ignored-paths', default=[],
                         help='List of the API paths to exclude from fuzzing.')
 
+    parser.add_argument('--proxy', dest='proxy', default=None,
+                        help='HTTP proxy server address, e.g. http://127.0.0.1:8080. '
+                             'Use in combination with --ignore-cert-errors for proxies like Burp to work.')
+
     args = vars(parser.parse_args())
 
     if args['url'] is None:
@@ -241,7 +246,8 @@ def main():
         tnt = TntFuzzer(url=args['url'], iterations=args['iterations'], headers=args['headers'],
                         log_unexpected_errors_only=not args['log_all'], use_string_pattern=args['string-patterns'],
                         max_string_length=args['max-random-string-len'], ignore_tls=args["ignore-tls"],
-                        host=args["host"], basepath=args["basepath"], ignored_paths=args['ignored-paths'])
+                        host=args["host"], basepath=args["basepath"], ignored_paths=args['ignored-paths'],
+                        proxy=args['proxy'])
         try:
             tnt.start()
         except SchemaException:
