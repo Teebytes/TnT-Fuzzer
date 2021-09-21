@@ -42,14 +42,21 @@ class HttpOperation:
         if 'parameters' in self.op_infos:
             for parameter in self.op_infos['parameters']:
                 # catch path parameters and replace them in url
-                if 'path' == parameter['in']:
-                    if 'type' in parameter:
-                        parameter_type = parameter['type']
-                    elif 'type' in parameter['schema']:
-                        parameter_type = parameter['schema']['type']
-                    else:
-                        parameter_type = parameter['schema']['$ref'].split('/')[-1]
-                    url = self.replace_url_parameter(url, parameter['name'], parameter_type)
+
+                # sometimes KeyError is thrown here
+                try:
+                    if 'path' == parameter['in']:
+                        if 'type' in parameter:
+                            parameter_type = parameter['type']
+                        elif 'type' in parameter['schema']:
+                            parameter_type = parameter['schema']['type']
+                        else:
+                            parameter_type = parameter['schema']['$ref'].split('/')[-1]
+                        url = self.replace_url_parameter(url, parameter['name'], parameter_type)
+                except KeyError:
+                    #print("Error: no key 'in' for this parameter")
+                    #print(parameter)
+                    continue
 
                 if 'body' == parameter['in']:
                     self.request_body = self.create_body(parameter)
