@@ -10,7 +10,7 @@ from pyjfuzz.core.errors import PJFInvalidType
 
 
 class HttpOperation:
-    def __init__(self, op_code, host_basepath, path, op_infos, headers, replicator, use_fuzzing=True, ignore_tls=False):
+    def __init__(self, op_code, host_basepath, path, op_infos, headers, replicator, use_fuzzing=True, ignore_tls=False, proxy=None):
         self.op_code = op_code
         self.url = host_basepath.rstrip("/") + "/" + path.lstrip("/")
         self.op_infos = op_infos
@@ -20,6 +20,8 @@ class HttpOperation:
         self.request_body = None
         self.headers = headers
         self.ignore_tls = ignore_tls
+        self.proxies = {'http':proxy, 'https':proxy}
+        #self.proxies = {'http':'http://host.docker.internal:8081', 'https':'http://host.docker.internal:8081'}
         self.random = Random()
 
     def fuzz(self, json_str):
@@ -42,14 +44,21 @@ class HttpOperation:
         if 'parameters' in self.op_infos:
             for parameter in self.op_infos['parameters']:
                 # catch path parameters and replace them in url
-                if 'path' == parameter['in']:
-                    if 'type' in parameter:
-                        parameter_type = parameter['type']
-                    elif 'type' in parameter['schema']:
-                        parameter_type = parameter['schema']['type']
-                    else:
-                        parameter_type = parameter['schema']['$ref'].split('/')[-1]
-                    url = self.replace_url_parameter(url, parameter['name'], parameter_type)
+
+                # sometimes KeyError is thrown here
+                try:
+                    if 'path' == parameter['in']:
+                        if 'type' in parameter:
+                            parameter_type = parameter['type']
+                        elif 'type' in parameter['schema']:
+                            parameter_type = parameter['schema']['type']
+                        else:
+                            parameter_type = parameter['schema']['$ref'].split('/')[-1]
+                        url = self.replace_url_parameter(url, parameter['name'], parameter_type)
+                except KeyError:
+                    #print("Error: no key 'in' for this parameter")
+                    #print(parameter)
+                    continue
 
                 if 'body' == parameter['in']:
                     self.request_body = self.create_body(parameter)
@@ -76,22 +85,22 @@ class HttpOperation:
 
         if self.op_code == 'post':
             if bool(form_data):
-                response = requests.post(url=url, data=form_data, json=None, headers=self.headers, verify=verify_tls)
+                response = requests.post(url=url, data=form_data, json=None, headers=self.headers, verify=verify_tls, proxies=self.proxies)
             else:
                 response = requests.post(url=url, data=None, json=self.request_body, headers=self.headers,
                                          verify=verify_tls)
 
         elif self.op_code == 'get':
-            response = requests.get(url=url, params=form_data, headers=self.headers, verify=verify_tls)
+            response = requests.get(url=url, params=form_data, headers=self.headers, verify=verify_tls, proxies=self.proxies)
 
         elif self.op_code == 'delete':
-            response = requests.delete(url=url, headers=self.headers, verify=verify_tls)
+            response = requests.delete(url=url, headers=self.headers, verify=verify_tls, proxies=self.proxies)
 
         elif self.op_code == 'put':
-            response = requests.put(url=url, data=form_data, headers=self.headers, verify=verify_tls)
+            response = requests.put(url=url, data=form_data, headers=self.headers, verify=verify_tls, proxies=self.proxies)
 
         elif self.op_code == 'patch':
-            response = requests.patch(url=url, data=form_data, headers=self.headers, verify=verify_tls)
+            response = requests.patch(url=url, data=form_data, headers=self.headers, verify=verify_tls, proxies=self.proxies)
 
         else:
             response = None

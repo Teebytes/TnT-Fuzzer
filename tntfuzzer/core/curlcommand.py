@@ -3,7 +3,7 @@ import json
 
 class CurlCommand:
 
-    def __init__(self, url, method, data, headers, ignore_tls=False):
+    def __init__(self, url, method, data, headers, ignore_tls=False, proxy=None):
         self.url = url
         self.method = method
         self.data = data
@@ -13,13 +13,18 @@ class CurlCommand:
             self.ignore_tls = "-k "  # short for --insecure
         else:
             self.ignore_tls = ""
+        
+        if proxy:
+            self.proxy = "--proxy " + proxy
+        else:
+            self.proxy = ""
 
     def get(self):
         if not self.data or len(self.data) < 1:
-            curl_command = "curl " + self.ignore_tls + "-X" + self.method.upper() + " " + self.generate_headers() \
+            curl_command = "curl " + self.ignore_tls + self.proxy + " -X" + self.method.upper() + " " + self.generate_headers() \
                            + " " + self.url
         else:
-            curl_command = "curl " + self.ignore_tls + "-X" + self.method.upper() + " " + \
+            curl_command = "curl " + self.ignore_tls + self.proxy + " -X" + self.method.upper() + " " + \
                            self.generate_headers() + " -d '" + self.data + "' " + self.url
 
         return curl_command
